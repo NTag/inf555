@@ -6,10 +6,20 @@
 //  Copyright © 2015 Basile Camille. All rights reserved.
 //
 
-#include <iostream>
+#include "CannyFilter.hpp"
+#include "opencv2/core/utility.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/imgcodecs.hpp"
+#include "opencv2/highgui.hpp"
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
+using namespace std;
+using namespace cv;
+
+int main(int argc, char** argv) {
+    Mat img = imread("../fruits.JPG");
+    CannyFilter canny = CannyFilter(10, 30);
+    Mat edges = canny.detectEdges(img);
+    imshow("Edges", edges); waitKey(0);
+    
     return 0;
 }
