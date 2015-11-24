@@ -16,8 +16,14 @@
 #include <vector>
 #include <fstream>
 #include <GLUT/glut.h>
+#include "CannyFilter.hpp"
+#include "opencv2/core/utility.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/imgcodecs.hpp"
+#include "opencv2/highgui.hpp"
 
 using namespace std;
+using namespace cv;
 
 vector<string> files;
 string currentFile = "";
@@ -26,6 +32,15 @@ int currentView = numberOfViews+1;
 
 void processImage(float* depth) {
     
+    // À adapter
+    // Transformer depth en matrice
+    // Puis lui appliquer Canny
+    Mat img = imread("../fruits.JPG");
+    CannyFilter canny = CannyFilter(10, 30);
+    Mat edges = canny.detectEdges(img);
+    imshow("Edges", edges); waitKey(0);
+    
+    // Puis découper en morceaux etc...
 }
 
 void continueFile() {
