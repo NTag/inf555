@@ -18,6 +18,7 @@ public:
     DistributedViews(int d);
     int getNum() const;
     Point3* getDirections();
+    std::pair<double, Point3>* getRotations(); // TODO
     
 private:
     int d;

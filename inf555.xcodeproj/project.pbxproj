@@ -7,7 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6C18F7FE1BEA5F08001CDC35 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C18F7FD1BEA5F08001CDC35 /* main.cpp */; };
+		916406241C04940F0034A09C /* Galif.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 916406221C04940F0034A09C /* Galif.cpp */; };
+		91FBD7C41BFB7DA600F41EBE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C18F7FD1BEA5F08001CDC35 /* main.cpp */; };
+		91FBD7C91BFB7EC100F41EBE /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91FBD7C71BFB7EC100F41EBE /* GLUT.framework */; };
+		91FBD7CA1BFB7EC100F41EBE /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91FBD7C81BFB7EC100F41EBE /* OpenGL.framework */; };
+		91FBD7CD1BFB8F8700F41EBE /* DistributedViews.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91FBD7CB1BFB8F8700F41EBE /* DistributedViews.cpp */; };
+		91FBD7D01BFCBEC700F41EBE /* Point3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91FBD7CE1BFCBEC700F41EBE /* Point3.cpp */; };
+		91FBD7D31BFCDDEB00F41EBE /* CannyFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91FBD7D11BFCDDEB00F41EBE /* CannyFilter.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +31,16 @@
 /* Begin PBXFileReference section */
 		6C18F7FA1BEA5F08001CDC35 /* inf555 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = inf555; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C18F7FD1BEA5F08001CDC35 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		916406221C04940F0034A09C /* Galif.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Galif.cpp; sourceTree = "<group>"; };
+		916406231C04940F0034A09C /* Galif.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Galif.hpp; sourceTree = "<group>"; };
+		91FBD7C71BFB7EC100F41EBE /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
+		91FBD7C81BFB7EC100F41EBE /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		91FBD7CB1BFB8F8700F41EBE /* DistributedViews.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DistributedViews.cpp; sourceTree = "<group>"; };
+		91FBD7CC1BFB8F8700F41EBE /* DistributedViews.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DistributedViews.hpp; sourceTree = "<group>"; };
+		91FBD7CE1BFCBEC700F41EBE /* Point3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Point3.cpp; sourceTree = "<group>"; };
+		91FBD7CF1BFCBEC700F41EBE /* Point3.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Point3.hpp; sourceTree = "<group>"; };
+		91FBD7D11BFCDDEB00F41EBE /* CannyFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CannyFilter.cpp; sourceTree = "<group>"; };
+		91FBD7D21BFCDDEB00F41EBE /* CannyFilter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CannyFilter.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +48,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				91FBD7C91BFB7EC100F41EBE /* GLUT.framework in Frameworks */,
+				91FBD7CA1BFB7EC100F41EBE /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41,6 +59,8 @@
 		6C18F7F11BEA5F08001CDC35 = {
 			isa = PBXGroup;
 			children = (
+				91FBD7C71BFB7EC100F41EBE /* GLUT.framework */,
+				91FBD7C81BFB7EC100F41EBE /* OpenGL.framework */,
 				6C18F7FC1BEA5F08001CDC35 /* inf555 */,
 				6C18F7FB1BEA5F08001CDC35 /* Products */,
 			);
@@ -58,6 +78,14 @@
 			isa = PBXGroup;
 			children = (
 				6C18F7FD1BEA5F08001CDC35 /* main.cpp */,
+				91FBD7CB1BFB8F8700F41EBE /* DistributedViews.cpp */,
+				91FBD7CC1BFB8F8700F41EBE /* DistributedViews.hpp */,
+				91FBD7CE1BFCBEC700F41EBE /* Point3.cpp */,
+				91FBD7CF1BFCBEC700F41EBE /* Point3.hpp */,
+				91FBD7D11BFCDDEB00F41EBE /* CannyFilter.cpp */,
+				91FBD7D21BFCDDEB00F41EBE /* CannyFilter.hpp */,
+				916406221C04940F0034A09C /* Galif.cpp */,
+				916406231C04940F0034A09C /* Galif.hpp */,
 			);
 			path = inf555;
 			sourceTree = "<group>";
@@ -118,7 +146,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6C18F7FE1BEA5F08001CDC35 /* main.cpp in Sources */,
+				916406241C04940F0034A09C /* Galif.cpp in Sources */,
+				91FBD7CD1BFB8F8700F41EBE /* DistributedViews.cpp in Sources */,
+				91FBD7D01BFCBEC700F41EBE /* Point3.cpp in Sources */,
+				91FBD7C41BFB7DA600F41EBE /* main.cpp in Sources */,
+				91FBD7D31BFCDDEB00F41EBE /* CannyFilter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,6 +237,27 @@
 		6C18F8021BEA5F08001CDC35 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				OTHER_LDFLAGS = (
+					"-lopencv_calib3d",
+					"-lopencv_core",
+					"-lopencv_features2d",
+					"-lopencv_flann",
+					"-lopencv_highgui",
+					"-lopencv_imgcodecs",
+					"-lopencv_imgproc",
+					"-lopencv_ml",
+					"-lopencv_objdetect",
+					"-lopencv_photo",
+					"-lopencv_shape",
+					"-lopencv_stitching",
+					"-lopencv_superres",
+					"-lopencv_ts",
+					"-lopencv_video",
+					"-lopencv_videoio",
+					"-lopencv_videostab",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -212,6 +265,27 @@
 		6C18F8031BEA5F08001CDC35 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				OTHER_LDFLAGS = (
+					"-lopencv_calib3d",
+					"-lopencv_core",
+					"-lopencv_features2d",
+					"-lopencv_flann",
+					"-lopencv_highgui",
+					"-lopencv_imgcodecs",
+					"-lopencv_imgproc",
+					"-lopencv_ml",
+					"-lopencv_objdetect",
+					"-lopencv_photo",
+					"-lopencv_shape",
+					"-lopencv_stitching",
+					"-lopencv_superres",
+					"-lopencv_ts",
+					"-lopencv_video",
+					"-lopencv_videoio",
+					"-lopencv_videostab",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -235,6 +309,7 @@
 				6C18F8031BEA5F08001CDC35 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
