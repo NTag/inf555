@@ -30,6 +30,7 @@ int DistributedViews::getNum() const {
 
 
 void DistributedViews::initSeeds() {
+    MSE = 0.;
     // choisir this.d sommets dans le maillage et les places dans this.centroids
     srand(time(NULL));
     int d = this->getNum();
