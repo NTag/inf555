@@ -19,9 +19,13 @@ DistributedViews::DistributedViews(int d_) {
     d = d_;
     MSE = 0.;
     centroids = new Point3[d_];
-    // créer un maillage de la sphère unité --> vertices
+    // créer un maillage de la sphère unité
     std::string filename = "/Users/ntag/Documents/X/2015-2016/INF555/inf555/sphere2.off";
     initSphere(filename);
+}
+
+DistributedViews::~DistributedViews() {
+    delete[] this->centroids;
 }
 
 int DistributedViews::getNum() const {
