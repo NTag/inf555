@@ -78,10 +78,15 @@ void processImage(float* depth) {
     // À adapter
     // Transformer depth en matrice
     // Puis lui appliquer Canny
-    Mat img = imread("../fruits.JPG");
+    Mat img(800, 800, CV_32F, depth);
+    
+    imshow("Depth", img);
+    
     CannyFilter canny = CannyFilter(10, 30);
     Mat edges = canny.detectEdges(img);
-    imshow("Edges", edges); waitKey(0);
+    cout << "Canny : terminé" << endl;
+    imshow("Edges", edges);
+    waitKey(0);
     
     // Puis découper en morceaux etc...
 }
@@ -151,7 +156,7 @@ void continueFile() {
     
     // On met l'objet dans la position correspondant à la vue souhaitée
     // glRotated(currentView+45, 0, 1, 0);
-    float fa = 1.2;
+    float fa = 1.1;
     gluLookAt(fa*directions[currentView].x, fa*directions[currentView].y, fa*directions[currentView].z, b[0], b[1], b[2], -directions[currentView].x, -directions[currentView].y, -directions[currentView].z);
     // cout << directions[currentView].x << " " << directions[currentView].y << " " << directions[currentView].z << endl;
     
@@ -162,15 +167,17 @@ void continueFile() {
     float* depth = new float[800*800];
     glReadPixels(0, 0, 800, 800, GL_DEPTH_COMPONENT, GL_FLOAT, depth);
     
+//    for (int l = 0; l < 800; l++) {
+//        for (int k = 0; k < 800; k++) {
+//            cout << depth[l*800+k] << " ";
+//        }
+//        cout << endl;
+//    }
+    
     // On applique la suite
     processImage(depth);
     
-    //    for (int l = 0; l < 800; l++) {
-    //        for (int k = 0; k < 800; k++) {
-    //            cout << depth[l*800+k] << " ";
-    //        }
-    //        cout << endl;
-    //    }
+
     
     delete[] depth;
     for (int i = 0; i < nbVertices; i++) {
@@ -208,16 +215,16 @@ void draw() {
 
 int main(int argc, char** argv) {
     /* Canny, Galif */
-    Mat img = imread("../fruits.JPG", 0);
-
-    double minVal, maxVal;
-    minMaxLoc(img, &minVal, &maxVal);
-    img.convertTo(img, CV_32F, 1./(maxVal-minVal));
-    imshow("IMG", img);waitKey();
-    
-    GALIF galif = GALIF(0.13, 3, 4, 8);
-    
-    galif.feature(img, 0.1);
+//    Mat img = imread("../fruits.JPG", 0);
+//
+//    double minVal, maxVal;
+//    minMaxLoc(img, &minVal, &maxVal);
+//    img.convertTo(img, CV_32F, 1./(maxVal-minVal));
+//    imshow("IMG", img);waitKey();
+//    
+//    GALIF galif = GALIF(0.13, 3, 4, 8);
+//    
+//    galif.feature(img, 0.1);
 
     
     /* OFF preprocessing */
@@ -260,7 +267,7 @@ int main(int argc, char** argv) {
     
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-1, 1, -1, 1, -5, 5);
+    glOrtho(-1, 1, -1, 1, -2.2, 2.2);
     
     glutDisplayFunc(draw);
     
