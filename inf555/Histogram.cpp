@@ -27,6 +27,10 @@ Histogram::Histogram(int* counts, int vocab_size, double* freq, int coll_size) {
         this->coords[i] = (counts[i] / s) * log10(coll_size / freq[i]);
     }
 }
+Histogram::Histogram(double* coords, int vocab_size) {
+    this->size = vocab_size;
+    this->coords = coords;
+}
 
 Histogram::~Histogram() {
     delete[] this->coords;
