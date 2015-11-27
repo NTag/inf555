@@ -17,6 +17,7 @@ public:
     int size;
     double* coords;
     Histogram(int* counts, int vocab_size, double* freq, int coll_size);
+    Histogram(double* coords, int vocab_size);
     ~Histogram();
     double norm() const;
     double similarity(Histogram const &a) const;

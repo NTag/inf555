@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <vector>
 #include <string>
+#include <fstream>
+#include <sstream>
 #include "Histogram.hpp"
 
 using namespace std;
@@ -19,6 +21,7 @@ using namespace std;
 class HistogramHelper {
 public:
     HistogramHelper(int wd, vector<float*>* words); // wd : longueur des mots
+    HistogramHelper(string filename); // Load histograms from a file
     
     int findClosestWord(float* feature);
     float distanceBetweenFeatures(float* w1, float* w2) const;
@@ -29,6 +32,9 @@ public:
     void computeFrequences();
     void computeHistograms(); // Calculer les histogrammes et supprimer les pré-histogrammes
     
+    // vector<string> findClosestModels(Histogram* h, int numberOfResults);
+    
+    bool saveHistograms(string filename);
     vector<Histogram*>* histograms; // Histogrammes des différents modèles
     
 private:
