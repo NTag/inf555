@@ -229,19 +229,6 @@ void draw() {
 
 
 int main(int argc, char** argv) {
-    /* Canny, Galif */
-//    Mat img = imread("../fruits.JPG", 0);
-//
-//    double minVal, maxVal;
-//    minMaxLoc(img, &minVal, &maxVal);
-//    img.convertTo(img, CV_32F, 1./(maxVal-minVal));
-//    imshow("IMG", img);waitKey();
-//    
-//    GALIF galif = GALIF(0.13, 3, 4, 8);
-//
-//    galif.feature(img, 0.1);
-
-    
     /* OFF preprocessing */
     cout << "Preprocessing images\n";
     if (argc < 2) {
