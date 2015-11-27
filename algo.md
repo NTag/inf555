@@ -24,7 +24,7 @@ On effectue une classification non supervisée (*k-means*) sur les VCL précéde
 
 ###Construction des histogrammes visuels
 Pour chaque modèle de la bibliothèque, et chaque vue de ce modèle, on calcule un histogramme visuel.  
-Pour chaque point-clé de la vue, on crée un vecteur **h**, histogramme de la vue. On calcule le VCL et on note `j` la classe à laquelle il appartient. On incrémente alors la composante `j` du vecteur **h** d'une unité.  
+Pour chaque vue, on crée un vecteur **h**, histogramme. On calcule le VCL et on note `j` la classe à laquelle il appartient. On incrémente alors la composante `j` du vecteur **h** d'une unité.  
 On stocke l'histogramme ainsi calculé dans une structure de données inversée (pour chercher sur les histogrammes et trouver les vues correspondantes).
 
 
