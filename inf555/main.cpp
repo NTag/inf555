@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <unistd.h>
 
 #include <GLUT/glut.h>
 #include "opencv2/core/utility.hpp"
@@ -25,6 +26,7 @@
 #include "CannyFilter.hpp"
 #include "Galif.hpp"
 #include "DistributedViews.hpp"
+#include "Point3.hpp"
 
 using namespace std;
 using namespace cv;
@@ -36,6 +38,7 @@ string currentFile = "";
 int numberOfViews = 70;
 int currentView = numberOfViews+1;
 DistributedViews sphere(numberOfViews);
+Point3* directions;
 
 
 /* ***** Utils functions ***** */
@@ -138,6 +141,8 @@ void continueFile() {
     b[1] = b[1]/nbVertices;
     b[2] = b[2]/nbVertices;
     
+    // cout << "b : " << b[0] << " " << b[1] << " " << b[2] << endl;
+    
     glEnd();
     glFlush();
     
@@ -145,9 +150,13 @@ void continueFile() {
     glLoadIdentity();
     
     // On met l'objet dans la position correspondant à la vue souhaitée
-    glRotated(currentView+45, 0, 1, 0);
+    // glRotated(currentView+45, 0, 1, 0);
+    float fa = 1.2;
+    gluLookAt(fa*directions[currentView].x, fa*directions[currentView].y, fa*directions[currentView].z, b[0], b[1], b[2], -directions[currentView].x, -directions[currentView].y, -directions[currentView].z);
+    // cout << directions[currentView].x << " " << directions[currentView].y << " " << directions[currentView].z << endl;
     
-    glTranslatef(-b[0], -b[1], -b[2]);
+    
+    //glTranslatef(-b[0], -b[1], -b[2]);
     
     // On calcule la profondeur
     float* depth = new float[800*800];
@@ -184,9 +193,14 @@ void draw() {
         currentFile = files.back();
         files.pop_back();
         cout << "Fichier " << currentFile << endl;
+        
+        // On génère les directions selon lesquelles projeter
+        // Et on les stocke
+        directions = sphere.getDirections();
     }
     
     continueFile();
+    // sleep(1);
     
     glutPostRedisplay();
 }
@@ -258,7 +272,7 @@ int main(int argc, char** argv) {
     
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-1, 1, -1, 1, -3, 3);
+    glOrtho(-1, 1, -1, 1, -5, 5);
     
     glutDisplayFunc(draw);
     
