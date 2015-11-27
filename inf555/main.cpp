@@ -34,6 +34,7 @@ using namespace cv;
 
 /* ***** Variables ***** */
 
+char* path;
 vector<string> files;
 string currentFile = "";
 int numberOfViews = 70;
@@ -44,6 +45,7 @@ CannyFilter canny = CannyFilter(10, 30);
 GALIF galif = GALIF(0.13, 3, 4, 8);
 double proba = 1. / numberOfViews;
 vector<float*> features_set;
+Vocabulary vocab;
 
 
 /* ***** Utils functions ***** */
@@ -77,6 +79,30 @@ string type2str(int type) {
 }
 
 
+
+
+void loadFilesFromFolder(char* path) {
+    DIR *dir;
+    struct dirent *ent;
+    regex off("^.+\\.off$");
+    if ((dir = opendir(path)) != NULL) {
+        while ((ent = readdir(dir)) != NULL) {
+            if (regex_match(ent->d_name, off)) {
+                string fc(path);
+                fc = fc + "/";
+                fc = fc + ent->d_name;
+                files.push_back(fc);
+            }
+        }
+        closedir(dir);
+    } else {
+        cout << "Impossible d'ouvrir le dossier";
+    }
+}
+
+
+
+
 /* ***** OFF files preprocessing ***** */
 
 void processImage(float* depth) {
@@ -99,6 +125,8 @@ void processImage(float* depth) {
     }
     cout << "Extraction de features : terminé" << endl;
 }
+
+
 
 
 void continueFile() {
@@ -199,16 +227,30 @@ void continueFile() {
 }
 
 
+
+
 void draw() {
     if (currentView < numberOfViews) {
         currentView++;
     } else {
         if (files.empty()) {
-            cout << "Création du vocabulaire visuel : démarrage" << endl;
-            Vocabulary vocab = Vocabulary(10, features_set, 256);
-            vocab.kMeans();
-            cout << "MSE : " << vocab.MSE << endl;
-            cout << "Création du vocabulaire visuel : terminé" << endl;
+            if (!vocab.kMeansDone) {
+                cout << "Création du vocabulaire visuel : démarrage" << endl;
+                vocab = Vocabulary(10, features_set, 256);
+                vocab.kMeans();
+                cout << "MSE : " << vocab.MSE << endl;
+                cout << "Création du vocabulaire visuel : terminé" << endl;
+                
+                // Compute all features
+                proba = 1.;
+                loadFilesFromFolder(path);
+                currentView = numberOfViews+1;
+                
+                glutPostRedisplay();
+            } else {
+                return;
+            }
+            
             return;
         }
         currentView = 1;
@@ -228,6 +270,8 @@ void draw() {
 }
 
 
+
+
 int main(int argc, char** argv) {
     /* OFF preprocessing */
     cout << "Preprocessing images\n";
@@ -244,23 +288,8 @@ int main(int argc, char** argv) {
     glutInitWindowPosition(0, 0);
     glutCreateWindow("GLUT Program");
     
-    DIR *dir;
-    struct dirent *ent;
-    regex off("^.+\\.off$");
-    if ((dir = opendir (argv[1])) != NULL) {
-        while ((ent = readdir (dir)) != NULL) {
-            if (regex_match(ent->d_name, off)) {
-                string fc(argv[1]);
-                fc = fc + "/";
-                fc = fc + ent->d_name;
-                files.push_back(fc);
-            }
-        }
-        closedir (dir);
-    } else {
-        cout << "Impossible d'ouvrir le dossier";
-        return EXIT_FAILURE;
-    }
+    path = argv[1];
+    loadFilesFromFolder(path);
     
     glEnable(GL_DEPTH_TEST);
     glDepthMask(1);
