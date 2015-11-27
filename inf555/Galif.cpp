@@ -185,6 +185,8 @@ vector<float*> GALIF::features(const cv::Mat &I, double p) {
             
             // Add the feature to result
             feats.push_back(feat);
+        } else {
+            count_kp -= 1;
         }
      }
     
