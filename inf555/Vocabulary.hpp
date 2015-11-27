@@ -21,6 +21,7 @@ public:
     float MSE;
     bool kMeansDone;
     
+    Vocabulary();
     Vocabulary(int s, std::vector<float*> const &feats, int f_long);
     ~Vocabulary();
     void kMeans();

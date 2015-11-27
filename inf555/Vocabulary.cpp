@@ -22,6 +22,13 @@ float featuresDist2(float* a, float* b, int s) {
     return l;
 }
 
+Vocabulary::Vocabulary() {
+    this->size = 0;
+    this->feat_long = 0;
+    this->MSE = 0.;
+    this->kMeansDone = false;
+}
+
 Vocabulary::Vocabulary(int s, vector<float*> const &feats, int f_long) {
     this->size = s;
     this->feat_long = f_long;
