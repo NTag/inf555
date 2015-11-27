@@ -27,6 +27,7 @@
 #include "Galif.hpp"
 #include "DistributedViews.hpp"
 #include "Point3.hpp"
+#include "Vocabulary.hpp"
 
 using namespace std;
 using namespace cv;
@@ -42,6 +43,7 @@ Point3* directions;
 CannyFilter canny = CannyFilter(10, 30);
 GALIF galif = GALIF(0.13, 3, 4, 8);
 double proba = 1. / numberOfViews;
+vector<float*> features_set;
 
 
 /* ***** Utils functions ***** */
@@ -91,7 +93,10 @@ void processImage(float* depth) {
     // Compute features
     cout << "Exctraction de features : démarrage" << endl;
     edges.convertTo(edges, CV_32F);
-    galif.features(edges, proba);
+    vector<float*> features = galif.features(edges, proba);
+    for (vector<float*>::iterator it = features.begin(); it != features.end(); ++it) {
+        features_set.push_back(*it);
+    }
     cout << "Extraction de features : terminé" << endl;
 }
 
@@ -121,7 +126,7 @@ void continueFile() {
             continue;
         i++;
         
-        // Ligne 2 : umber of vertices, number of faces, number of edges
+        // Ligne 2 : number of vertices, number of faces, number of edges
         if (i == 1) {
             
         } else if (i == 2) {
@@ -199,6 +204,11 @@ void draw() {
         currentView++;
     } else {
         if (files.empty()) {
+            cout << "Création du vocabulaire visuel : démarrage" << endl;
+            Vocabulary vocab = Vocabulary(10, features_set, 256);
+            vocab.kMeans();
+            cout << "MSE : " << vocab.MSE << endl;
+            cout << "Création du vocabulaire visuel : terminé" << endl;
             return;
         }
         currentView = 1;
