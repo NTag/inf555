@@ -27,6 +27,7 @@ Mat CannyFilter::detectEdges(Mat &img) {
     out.create(img.size(), img.type());
     
     img.convertTo(gray, CV_8U, 255);
+
     blur(gray, edges, Size(3, 3));
     Canny(edges, edges, this->low_threshold, this->high_threshold, 3);
     
