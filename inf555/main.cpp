@@ -24,6 +24,7 @@
 
 #include "CannyFilter.hpp"
 #include "Galif.hpp"
+#include "DistributedViews.hpp"
 
 using namespace std;
 using namespace cv;
@@ -34,6 +35,7 @@ vector<string> files;
 string currentFile = "";
 int numberOfViews = 70;
 int currentView = numberOfViews+1;
+DistributedViews sphere(numberOfViews);
 
 
 /* ***** Utils functions ***** */

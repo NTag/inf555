@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <vector>
+#include <string>
 #include "Point3.hpp"
 
 class DistributedViews {
@@ -19,6 +20,7 @@ public:
     int getNum() const;
     Point3* getDirections();
     std::pair<double, Point3>* getRotations(); // TODO
+    void initSphere(std::string filename);
     
 private:
     int d;
