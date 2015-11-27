@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9106B3F81C090B6D00765D28 /* Vocabulary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9106B3F61C090B6D00765D28 /* Vocabulary.cpp */; };
+		6CD88F311C08F61F001489C6 /* HistogramHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6CD88F2F1C08F61F001489C6 /* HistogramHelper.cpp */; };
 		916406241C04940F0034A09C /* Galif.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 916406221C04940F0034A09C /* Galif.cpp */; };
 		91C99E441C079DB00075016B /* Histogram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91C99E421C079DB00075016B /* Histogram.cpp */; };
 		91FBD7C41BFB7DA600F41EBE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C18F7FD1BEA5F08001CDC35 /* main.cpp */; };
@@ -35,6 +36,8 @@
 		6C18F7FD1BEA5F08001CDC35 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		9106B3F61C090B6D00765D28 /* Vocabulary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vocabulary.cpp; sourceTree = "<group>"; };
 		9106B3F71C090B6D00765D28 /* Vocabulary.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Vocabulary.hpp; sourceTree = "<group>"; };
+		6CD88F2F1C08F61F001489C6 /* HistogramHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HistogramHelper.cpp; sourceTree = "<group>"; };
+		6CD88F301C08F61F001489C6 /* HistogramHelper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HistogramHelper.hpp; sourceTree = "<group>"; };
 		916406221C04940F0034A09C /* Galif.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Galif.cpp; sourceTree = "<group>"; };
 		916406231C04940F0034A09C /* Galif.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Galif.hpp; sourceTree = "<group>"; };
 		91C99E421C079DB00075016B /* Histogram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Histogram.cpp; sourceTree = "<group>"; };
@@ -88,6 +91,8 @@
 				9106B3F71C090B6D00765D28 /* Vocabulary.hpp */,
 				91C99E421C079DB00075016B /* Histogram.cpp */,
 				91C99E431C079DB00075016B /* Histogram.hpp */,
+				6CD88F2F1C08F61F001489C6 /* HistogramHelper.cpp */,
+				6CD88F301C08F61F001489C6 /* HistogramHelper.hpp */,
 				91FBD7CB1BFB8F8700F41EBE /* DistributedViews.cpp */,
 				91FBD7CC1BFB8F8700F41EBE /* DistributedViews.hpp */,
 				91FBD7CE1BFCBEC700F41EBE /* Point3.cpp */,
@@ -158,6 +163,7 @@
 			files = (
 				91C99E441C079DB00075016B /* Histogram.cpp in Sources */,
 				916406241C04940F0034A09C /* Galif.cpp in Sources */,
+				6CD88F311C08F61F001489C6 /* HistogramHelper.cpp in Sources */,
 				91FBD7CD1BFB8F8700F41EBE /* DistributedViews.cpp in Sources */,
 				91FBD7D01BFCBEC700F41EBE /* Point3.cpp in Sources */,
 				91FBD7C41BFB7DA600F41EBE /* main.cpp in Sources */,
