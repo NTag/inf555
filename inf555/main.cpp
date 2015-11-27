@@ -215,21 +215,9 @@ int main(int argc, char** argv) {
     img.convertTo(img, CV_32F, 1./(maxVal-minVal));
     imshow("IMG", img);waitKey();
     
-    GALIF galif = GALIF(100, 1./50, 4, 8);
+    GALIF galif = GALIF(0.13, 3, 4, 8);
     
-//    Mat gf = galif.get_filter(1, 600, 600);
-//    imshow("IMG", gf);waitKey();
-//    
-//    Mat dft_img = Mat(getOptimalDFTSize(gf.rows), getOptimalDFTSize(gf.cols), CV_32FC2);
-//    idft(gf, dft_img);
-//    imshow("IMG", dft_img);waitKey();
-//    
-//    double minFreq, maxFreq;
-//    Point minPt, maxPt;
-//    minMaxLoc(dft_img, &minFreq, &maxFreq, &minPt, &maxPt);
-//    cout << maxPt << endl;
-    
-    galif.feature(img);
+    galif.feature(img, 0.1);
 
     
     /* OFF preprocessing */
