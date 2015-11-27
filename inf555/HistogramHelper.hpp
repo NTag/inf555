@@ -32,7 +32,7 @@ public:
     void computeFrequences();
     void computeHistograms(); // Calculer les histogrammes et supprimer les pré-histogrammes
     
-    // vector<string> findClosestModels(Histogram* h, int numberOfResults);
+    vector<string> findClosestModels(Histogram &h, int numberOfResults);
     
     bool saveHistograms(string filename);
     vector<Histogram*>* histograms; // Histogrammes des différents modèles
