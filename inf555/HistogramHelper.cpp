@@ -73,3 +73,35 @@ void HistogramHelper::computeHistograms() {
         delete[] cpreh;
     }
 }
+
+bool HistogramHelper::saveHistograms(string filename) {
+    ofstream file;
+    file.open(filename);
+    
+    int numberOfHistograms = this->prehistograms->size();
+    
+    // Première ligne : numbre-de-mots longueur-d'un-mot nombre-de-vues
+    file << this->numberOfWords << " " << this->lenthOfWords << numberOfHistograms << "\n";
+    
+    // Ensuite on stocke les mots : index coordonnées
+    for (int i = 0; i < this->numberOfWords; i++) {
+        file << i;
+        for (int j = 0; j < this->lenthOfWords; j++) {
+            file << " " << this->words->at(i)[j];
+        }
+        file << "\n";
+    }
+    
+    // Puis enfin on stocke les histogrammes
+    for (int i = 0; i < numberOfHistograms; i++) {
+        file << this->names->at(i);
+        for (int j = 0; j < numberOfWords; j++) {
+            file << " " << this->histograms->at(i)->coords[j];
+        }
+        file << "\n";
+    }
+    
+    file.close();
+    
+    return true;
+}
