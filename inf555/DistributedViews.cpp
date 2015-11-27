@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string>
+#include <fstream>
 
 using namespace std;
 
@@ -18,6 +20,8 @@ DistributedViews::DistributedViews(int d_) {
     MSE = 0.;
     centroids = new Point3[d_];
     // créer un maillage de la sphère unité --> vertices
+    std::string filename = "/Users/ntag/Documents/X/2015-2016/INF555/inf555/sphere2.off";
+    initSphere(filename);
 }
 
 int DistributedViews::getNum() const {
@@ -91,4 +95,18 @@ Point3* DistributedViews::getDirections() {
     }
     
     return centroids;
+}
+
+void DistributedViews::initSphere(std::string filename) {
+    ifstream File(filename);
+    string Line;
+    string Name;
+    
+    while(getline(File, Line)) {
+        float* Vertex = new float[3];
+        sscanf(Line.c_str(), "%f %f %f", &Vertex[0], &Vertex[1], &Vertex[2]);
+        Point3 p(Vertex[0], Vertex[1], Vertex[2]);
+        vertices.push_back(p);
+    }
+
 }
