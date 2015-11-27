@@ -39,7 +39,9 @@ int numberOfViews = 70;
 int currentView = numberOfViews+1;
 DistributedViews sphere(numberOfViews);
 Point3* directions;
+CannyFilter canny = CannyFilter(10, 30);
 GALIF galif = GALIF(0.13, 3, 4, 8);
+double proba = 1. / numberOfViews;
 
 
 /* ***** Utils functions ***** */
@@ -76,24 +78,20 @@ string type2str(int type) {
 /* ***** OFF files preprocessing ***** */
 
 void processImage(float* depth) {
-    // À adapter
-    // Transformer depth en matrice
-    // Puis lui appliquer Canny
+    // Transform depth into a cv::Mat
     Mat img(800, 800, CV_32F, depth);
+//    imshow("Depth", img);
     
-    imshow("Depth", img);
-    
-    CannyFilter canny = CannyFilter(10, 30);
+    // Apply Canny filter to extract lines
     Mat edges = canny.detectEdges(img);
     cout << "Canny : terminé" << endl;
 //    imshow("Edges", edges);
 //    waitKey(0);
     
-    // Calcul des features
+    // Compute features
     cout << "Exctraction de features : démarrage" << endl;
     edges.convertTo(edges, CV_32F);
-    double p = 1000. * 70. / 1000000.;
-    galif.features(edges, p);
+    galif.features(edges, proba);
     cout << "Extraction de features : terminé" << endl;
 }
 
