@@ -11,6 +11,7 @@
 #include <time.h>
 #include <random>
 #include <iostream>
+#include <chrono>
 
 #include "opencv2/core/utility.hpp"
 #include "opencv2/imgproc.hpp"
@@ -106,22 +107,24 @@ Mat GALIF::filter(int i, cv::Mat const &I) const {
     log(dft_I, dft_I);
     normalize(dft_I, dft_I, 0, 1, CV_MINMAX);
     
-    imshow("Filtered", dft_I);
-    waitKey();
+//    imshow("Filtered", dft_I);
+//    waitKey();
     
     return dft_I;
 }
 
-Mat GALIF::non_normalized_feature(int i, const cv::Mat &Ri, double p) const {
-    assert(i >= 0 && i < this->k);
+// Returns th features of some keypoints in the image. The keypoints are chosen uniformly with probability p
+vector<float*> GALIF::features(const cv::Mat &I, double p) {
+    this->compute_filters(I);
     
-    default_random_engine gen;
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    default_random_engine gen(seed);
     uniform_real_distribution<double> unif_distr(0.0, 1.0);
     
     // Compute 32 x 32 = 1024 keypoints evenly distributed
     int const DIV = 32;
-    int const x_step = Ri.cols/(2*DIV);
-    int const y_step = Ri.rows/(2*DIV);
+    int const x_step = I.cols/(2*DIV);
+    int const y_step = I.rows/(2*DIV);
     vector<Point> keypoints;
     for (int j = 0; j < DIV; j++) {
         for (int l = 0; l < DIV; l++) {
@@ -129,56 +132,66 @@ Mat GALIF::non_normalized_feature(int i, const cv::Mat &Ri, double p) const {
         }
     }
     
-    // Foreach one, we determine whether we keep it or not; if yes, we divide the area around into n x n cells
     double const area_ratio = 0.075;
-    double const img_area = double(Ri.rows * Ri.cols);
+    double const img_area = double(I.rows * I.cols);
     double const bl_area = area_ratio * img_area;
     int bl_length = int(floor(sqrt(bl_area))); // côté d'un bloc servant au calcul de la feature d'un point-clé
     bl_length = (bl_length % 2 == 0) ? bl_length - 1 : bl_length;
     
+    vector<float*> feats;
+    int count_kp = 0;
     double tirage;
     int n = this->n;
-    Mat block, feat, cell;
     int bl_step, c_step;
     
+    Mat* R = new Mat[this->k];
+    for (int i = 0; i < this->k; i++) {
+        R[i] = this->filter(i, I);
+    }
+    
+    // Foreach keypoint, we determine whether we keep it or not; if yes, we divide the area around into n x n cells
     for (vector<Point>::iterator it = keypoints.begin(); it != keypoints.end(); ++it) {
         tirage = unif_distr(gen);
         if (tirage > p) {
             continue;
         }
+        count_kp += 1;
         
-        bl_step = min(min(min(min((bl_length - 1)/2, it->x -1), Ri.cols - it->x - 1), it->y-1), Ri.rows - it->y - 1);
+        float* feat = new float[this->k * this->n * this->n];
         
-        block = Ri(Rect(it->x - bl_step, it->y - bl_step, 2*bl_step+1, 2*bl_step+1));
-        
-        feat = Mat(n, n, CV_32F);
-        
-        // Foreach cell, compute the local feature value
+        // Iteration on the Gabor filter orientations
+        float norm = 0.;
+        bl_step = min(min(min(min((bl_length - 1)/2, it->x - 1), R[0].cols - it->x - 1), it->y-1), R[0].rows - it->y - 1);
         c_step = bl_step / n;
-        for (int j = 0; j < n; j++) {
-            for (int l = 0; l < n; l++) {
-                cell = block(Rect(j*c_step, l*c_step, c_step, c_step));
-                assert(sum(cell).isReal());
-                feat.at<float>(Point(j, l)) = sum(cell)(0);
+        for (int i = 0; i < this->k; i++) {
+            Mat block = R[i](Rect(it->x - bl_step, it->y - bl_step, 2*bl_step, 2*bl_step));
+            
+            // Foreach cell, compute the local feature value
+            for (int j = 0; j < n; j++) {
+                for (int l = 0; l < n; l++) {
+                    Mat cell = block(Rect(j*c_step, l*c_step, c_step, c_step));
+                    feat[i*n*n + j*n + l] = sum(cell)(0);
+                    norm += feat[i*n*n + j*n + l] * feat[i*n*n + j*n + l];
+                }
             }
+        }
+        
+        // Normalize the feature
+        norm = sqrt(norm);
+        if (norm > 0) {
+            for (int i = 0; i < this->k*this->n*this->n; i++) {
+                feat[i] /= norm;
+            }
+            
+            // Add the feature to result
+            feats.push_back(feat);
         }
      }
     
-    return feat;
-}
-
-Mat* GALIF::feature(cv::Mat const &I, double p) {
-    this->compute_filters(I);
+    // Free memory
+    delete[] R;
     
-    Mat* feats = new Mat[this->k];
-    Mat Ri, feat;
-    for (int i = 0; i < this->k; i++) {
-        Ri = this->filter(i, I);
-        feat = this->non_normalized_feature(i, Ri, p);
-        normalize(feat, feat);
-        feats[i] = 1./this->k * feat;
-    }
-    
+    cout << "Nombre de points-cles retenus : " << count_kp << endl;
     return feats;
 }
 
