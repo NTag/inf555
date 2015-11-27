@@ -39,6 +39,7 @@ int numberOfViews = 70;
 int currentView = numberOfViews+1;
 DistributedViews sphere(numberOfViews);
 Point3* directions;
+GALIF galif = GALIF(0.13, 3, 4, 8);
 
 
 /* ***** Utils functions ***** */
@@ -85,10 +86,15 @@ void processImage(float* depth) {
     CannyFilter canny = CannyFilter(10, 30);
     Mat edges = canny.detectEdges(img);
     cout << "Canny : terminé" << endl;
-    imshow("Edges", edges);
-    waitKey(0);
+//    imshow("Edges", edges);
+//    waitKey(0);
     
-    // Puis découper en morceaux etc...
+    // Calcul des features
+    cout << "Exctraction de features : démarrage" << endl;
+    edges.convertTo(edges, CV_32F);
+    double p = 1000. * 70. / 1000000.;
+    galif.features(edges, p);
+    cout << "Extraction de features : terminé" << endl;
 }
 
 
@@ -186,6 +192,7 @@ void continueFile() {
     delete[] TempVertices;
     delete[] b;
     File.close();
+    cout << endl;
 }
 
 
@@ -223,7 +230,7 @@ int main(int argc, char** argv) {
 //    imshow("IMG", img);waitKey();
 //    
 //    GALIF galif = GALIF(0.13, 3, 4, 8);
-//    
+//
 //    galif.feature(img, 0.1);
 
     
