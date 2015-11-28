@@ -16,6 +16,7 @@
 #include <vector>
 #include <fstream>
 #include <unistd.h>
+#include <array>
 
 #include <GLUT/glut.h>
 #include "opencv2/core/utility.hpp"
@@ -35,6 +36,8 @@ using namespace cv;
 
 /* ***** Variables ***** */
 
+static const int FEAT_SIZE = 256;
+
 char* path;
 vector<string> files;
 string currentFile = "";
@@ -45,7 +48,7 @@ Point3* directions;
 CannyFilter canny = CannyFilter(10, 30);
 GALIF* galif = new GALIF(0.13, 5, 4, 8);
 double proba = 1. / numberOfViews;
-vector<float*> features_set;
+vector<array<float, FEAT_SIZE>> features_set;
 Vocabulary* vocab = new Vocabulary();
 HistogramHelper* helper;
 
@@ -121,14 +124,14 @@ void processImage(float* depth) {
     // Compute features
     cout << "Extraction de features : démarrage" << endl;
     edges.convertTo(edges, CV_32F);
-    vector<float*> features = galif->features(edges, proba);
+    vector<array<float, FEAT_SIZE>> features = galif->features(edges, proba);
     if (vocab->kMeansDone) { // Create histograms
         int idx = helper->addPreHistogram(currentFile);
-        for (vector<float*>::iterator it = features.begin(); it != features.end(); ++it) {
+        for (vector<array<float, FEAT_SIZE>>::iterator it = features.begin(); it != features.end(); ++it) {
             helper->addFeatureForPreHistogram(idx, *it);
         }
     } else { // Prepare for vocabulary creation
-        for (vector<float*>::iterator it = features.begin(); it != features.end(); ++it) {
+        for (vector<array<float, FEAT_SIZE>>::iterator it = features.begin(); it != features.end(); ++it) {
             features_set.push_back(*it);
         }
     }
@@ -247,12 +250,12 @@ void draw() {
         if (files.empty()) {
             if (!vocab->kMeansDone) {
                 cout << "Création du vocabulaire visuel : démarrage" << endl;
-                vocab = new Vocabulary(20, features_set, 256);
+                vocab = new Vocabulary(20, features_set);
                 vocab->kMeans();
                 cout << "MSE : " << vocab->MSE << endl;
                 cout << "Création du vocabulaire visuel : terminé" << endl << endl;
                 
-                vector<float*> words;
+                vector<array<float, FEAT_SIZE>> words;
                 for (int i = 0; i < vocab->size; i++) {
                     words.push_back(vocab->centroids[i]);
                 }
@@ -297,7 +300,7 @@ void query(string filename) {
     imshow("Edges", edges);
     
     edges.convertTo(edges, CV_32F);
-    vector<float*> features = galif->features(edges, proba);
+    vector<array<float, FEAT_SIZE>> features = galif->features(edges, proba);
     waitKey(0);
     
     vector<string> models = helper->findClosestModels(features, 2);

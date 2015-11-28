@@ -11,7 +11,7 @@
 
 using namespace std;
 
-HistogramHelper::HistogramHelper(int wd, vector<float*> words) {
+HistogramHelper::HistogramHelper(int wd, vector<array<float, FEAT_SIZE>> words) {
     this->words = words;
     this->lengthOfWords = wd;
     this->numberOfWords = this->words.size();
@@ -44,7 +44,7 @@ HistogramHelper::HistogramHelper(string filename) {
             istringstream split(Line);
             string each;
             
-            float* currentWord = new float[this->lengthOfWords];
+            array<float, FEAT_SIZE> currentWord = {};
             
             int j = 0;
             while (getline(split, each, ' ')) {
@@ -89,16 +89,16 @@ HistogramHelper::HistogramHelper(string filename) {
 }
 
 
-float HistogramHelper::distanceBetweenFeatures(float *w1, float *w2) const {
+float HistogramHelper::distanceBetweenFeatures(array<float, FEAT_SIZE> w1, array<float, FEAT_SIZE> w2) const {
     float distance = 0;
     for (int i = 0; i < this->lengthOfWords; i++) {
-        distance = distance + w1[i] * w2[i];
+        distance = distance + (w1[i] - w2[i]) * (w1[i] - w2[i]);
     }
     return distance;
 }
 
 
-int HistogramHelper::findClosestWord(float *feature) {
+int HistogramHelper::findClosestWord(array<float, FEAT_SIZE> feature) {
     float dmin = -1;
     int imin = -1;
     
@@ -127,7 +127,7 @@ int HistogramHelper::addPreHistogram(string name) {
 }
 
 
-void HistogramHelper::addFeatureForPreHistogram(int i, float *feature) {
+void HistogramHelper::addFeatureForPreHistogram(int i, array<float, FEAT_SIZE> feature) {
     int closestWord = findClosestWord(feature);
     this->prehistograms[i][closestWord]++;
     
@@ -166,7 +166,7 @@ void HistogramHelper::computeHistograms() {
     this->names = newNames;
 }
 
-vector<string> HistogramHelper::findClosestModels(vector<float*> features, int numberOfResults) {
+vector<string> HistogramHelper::findClosestModels(vector<array<float, FEAT_SIZE>> features, int numberOfResults) {
     // On calcule les counts
     int* counts = new int[this->numberOfWords];
     for (int i = 0; i < this->numberOfWords; i++) {

@@ -11,6 +11,8 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <vector>
+#include <array>
 
 #include "opencv2/core/utility.hpp"
 #include "opencv2/imgproc.hpp"
@@ -25,11 +27,12 @@ public:
     int k; // number of filter orientations
     int n; // number of tiles
     cv::Mat* filters;
+    static const int FEAT_SIZE = 256;
     
     GALIF(double w0, double sigx, int k, int n);
     ~GALIF();
     
-    std::vector<float*> features(cv::Mat const &I, double p); // p is the probability for a keypoint to have its feature computed
+    std::vector<std::array<float, FEAT_SIZE>> features(cv::Mat const &I, double p); // p is the probability for a keypoint to have its feature computed
     
 //private:
     float gaussian(int i, double u, double v, int cols, int rows) const;

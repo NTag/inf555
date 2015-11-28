@@ -11,19 +11,19 @@
 
 #include <stdio.h>
 #include <vector>
+#include <array>
 
 class Vocabulary {
 public:
+    static const int FEAT_SIZE = 256;
     int size;
-    int feat_long;
-    float** centroids;
-    std::vector<float*> features;
+    std::vector<std::array<float, FEAT_SIZE>> centroids;
+    std::vector<std::array<float, FEAT_SIZE>> features;
     float MSE;
     bool kMeansDone;
     
     Vocabulary();
-    Vocabulary(int s, std::vector<float*> const &feats, int f_long);
-    ~Vocabulary();
+    Vocabulary(int s, std::vector<std::array<float, FEAT_SIZE>> const &feats);
     void kMeans();
 };
 

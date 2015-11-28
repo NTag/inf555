@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <vector>
+#include <array>
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -18,19 +19,20 @@
 
 class HistogramHelper {
 public:
-    HistogramHelper(int wd, std::vector<float*> words); // wd : longueur des mots
+    static const int FEAT_SIZE = 256;
+    HistogramHelper(int wd, std::vector<std::array<float, FEAT_SIZE>> words); // wd : longueur des mots
     HistogramHelper(std::string filename); // Load histograms from a file
     
-    int findClosestWord(float* feature);
-    float distanceBetweenFeatures(float* w1, float* w2) const;
+    int findClosestWord(std::array<float, FEAT_SIZE> feature);
+    float distanceBetweenFeatures(std::array<float, FEAT_SIZE> w1, std::array<float, FEAT_SIZE> w2) const;
     
     int addPreHistogram(std::string name); // Ajouter un nouveau pre-histogramme (une nouvelle vue) - retourne son index
-    void addFeatureForPreHistogram(int i, float* feature); // Prendre en compte une nouvelle feature pour la vue numéro i
+    void addFeatureForPreHistogram(int i, std::array<float, FEAT_SIZE> feature); // Prendre en compte une nouvelle feature pour la vue numéro i
     
     void computeFrequences();
     void computeHistograms(); // Calculer les histogrammes et supprimer les pré-histogrammes
     
-    std::vector<std::string> findClosestModels(std::vector<float*> features, int numberOfResults);
+    std::vector<std::string> findClosestModels(std::vector<std::array<float, FEAT_SIZE>> features, int numberOfResults);
     std::vector<std::string> findClosestModels(Histogram &h, int numberOfResults);
     
     bool saveHistograms(std::string filename);
@@ -39,7 +41,7 @@ public:
 private:
     int lengthOfWords; // Longueur des mots et des features
     int numberOfWords; // Nombre de mots
-    std::vector<float*> words;
+    std::vector<std::array<float, FEAT_SIZE>> words;
     std::vector<int*> prehistograms; // Préhistogrammes : pas normalisés en tenant compte de la fréquence
     double* frequences; // Fréquences des mots
     std::vector<std::string> names;

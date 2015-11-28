@@ -22,6 +22,8 @@
 using namespace std;
 using namespace cv;
 
+int const FEAT_SIZE = 256;
+
 
 GALIF::GALIF(double w0, double w, int k, int n) {
     assert(k > 0);
@@ -104,15 +106,15 @@ Mat GALIF::filter(int i, cv::Mat const &I) const {
     log(dft_I, dft_I);
     normalize(dft_I, dft_I, 0, 1, CV_MINMAX);
     
-    if (i == 3)
-        imshow("Filtered", dft_I);
+//    if (i == 3)
+//        imshow("Filtered", dft_I);
 //    waitKey();
     
     return dft_I;
 }
 
 // Returns th features of some keypoints in the image. The keypoints are chosen uniformly with probability p
-vector<float*> GALIF::features(const cv::Mat &I, double p) {
+vector<array<float, FEAT_SIZE>> GALIF::features(const cv::Mat &I, double p) {
     // Compute filtered image
     this->compute_filters(I);
     Mat* R = new Mat[this->k];
@@ -137,14 +139,13 @@ vector<float*> GALIF::features(const cv::Mat &I, double p) {
     int bl_length = int(floor(sqrt(bl_area))); // côté d'un bloc servant au calcul de la feature d'un point-clé
     bl_length = (bl_length % 2 == 0) ? bl_length - 1 : bl_length;
     
-    vector<float*> feats;
+    vector<array<float, FEAT_SIZE>> feats;
     int n = this->n;
     int bl_step, c_step;
 
     // Foreach keypoint, we divide the area around into n x n cells
     for (vector<Point>::iterator it = keypoints.begin(); it != keypoints.end(); ++it) {
-        float* feat = new float[this->k * this->n * this->n];
-        
+        array<float, FEAT_SIZE> feat = {};
         // Iteration on the Gabor filter orientations
         float norm = 0.;
         bl_step = min(min(min(min((bl_length - 1)/2, it->x - 1), R[0].cols - it->x - 1), it->y-1), R[0].rows - it->y - 1);
@@ -180,14 +181,10 @@ vector<float*> GALIF::features(const cv::Mat &I, double p) {
     uniform_real_distribution<double> unif_distr(0.0, 1.0);
     double tirage;
     double proba = p * (DIV * DIV) / max(int(feats.size()), 1);
-    vector<float*> kept_feats;
-    for (vector<float*>::iterator it = feats.begin(); it != feats.end(); ++it) {
+    vector<array<float, FEAT_SIZE>> kept_feats;
+    for (vector<array<float, FEAT_SIZE>>::iterator it = feats.begin(); it != feats.end(); ++it) {
         tirage = unif_distr(gen);
         if (tirage <= proba) {
-//            for (int j = 0; j < this->k * this->n * this->n; j++) {
-//                cout << *it[j] << "; ";
-//            }
-//            cout << endl;
             kept_feats.push_back(*it);
         }
     }
