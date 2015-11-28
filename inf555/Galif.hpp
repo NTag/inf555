@@ -31,8 +31,8 @@ public:
     
     std::vector<float*> features(cv::Mat const &I, double p); // p is the probability for a keypoint to have its feature computed
     
-private:
-    float gaussian(int i, double u, double v) const;
+//private:
+    float gaussian(int i, double u, double v, int cols, int rows) const;
     cv::Mat get_filter(int i, int m, int p) const;
     void compute_filters(cv::Mat const &I);
     cv::Mat filter(int i, cv::Mat const &I) const;

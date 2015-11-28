@@ -9,7 +9,8 @@
 #include "DistributedViews.hpp"
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+#include <random>
+#include <chrono>
 #include <string>
 #include <fstream>
 
@@ -36,11 +37,13 @@ int DistributedViews::getNum() const {
 void DistributedViews::initSeeds() {
     MSE = 0.;
     // choisir this.d sommets dans le maillage et les places dans this.centroids
-    srand(time(NULL));
     int d = this->getNum();
+    unsigned seed = unsigned(std::chrono::system_clock::now().time_since_epoch().count());
+    default_random_engine gen(seed);
+    uniform_int_distribution<int> distribution(0, this->vertices.size());
     int indexes[d];
     for (int i = 0; i < d; i++) {
-        indexes[i] = rand() % vertices.size(); // TODO - Check that indexes are unique
+        indexes[i] = distribution(gen); // TODO - Check that indexes are unique
     }
     for (int i = 0; i < d; i++) {
         centroids[i] = vertices[indexes[i]];

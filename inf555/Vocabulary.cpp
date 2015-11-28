@@ -38,7 +38,7 @@ Vocabulary::Vocabulary(int s, vector<float*> const &feats, int f_long) {
     this->kMeansDone = false;
     
     // Initialize centroids
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    unsigned seed = unsigned(std::chrono::system_clock::now().time_since_epoch().count());
     default_random_engine gen(seed);
     uniform_int_distribution<double> unif_distr(0, feats.size());
     for (int i = 0; i < s; i++) {
