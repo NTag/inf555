@@ -250,7 +250,7 @@ void draw() {
         if (files.empty()) {
             if (!vocab->kMeansDone) {
                 cout << "Création du vocabulaire visuel : démarrage" << endl;
-                vocab = new Vocabulary(20, features_set);
+                vocab = new Vocabulary(50, features_set);
                 vocab->kMeans();
                 cout << "MSE : " << vocab->MSE << endl;
                 cout << "Création du vocabulaire visuel : terminé" << endl << endl;
@@ -290,16 +290,12 @@ void draw() {
 void query(string filename) {
     Mat img = imread(filename);
     cvtColor(img, img, COLOR_BGR2GRAY);
-    imshow("Originale", img);
-    waitKey(0);
     
     Mat edges = canny.detectEdges(img);
     cout << "Canny : terminé" << endl;
-    imshow("Edges", edges);
     
     edges.convertTo(edges, CV_32F);
-    vector<array<float, FEAT_SIZE>> features = galif->features(edges, proba);
-    waitKey(0);
+    vector<array<float, FEAT_SIZE>> features = galif->features(edges, 1);
     
     vector<string> models = helper->findClosestModels(features, 2);
     for (int i = 0; i < models.size(); i++) {

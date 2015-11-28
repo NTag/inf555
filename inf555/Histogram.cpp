@@ -21,19 +21,25 @@ Histogram::Histogram(int* counts, int vocab_size, double* freq, int coll_size) {
     for (int i = 0; i < vocab_size; i++) {
         s += counts[i];
     }
-    
-    this->coords = new double[vocab_size];
+
     for (int i = 0; i < vocab_size; i++) {
-        this->coords[i] = (counts[i] / s) * log10(coll_size / freq[i]);
+        if (freq[i] == 0) {
+            this->coords.push_back(0);
+        } else {
+            this->coords.push_back((counts[i] / s) * log10(coll_size / freq[i]));
+        }
     }
 }
 Histogram::Histogram(double* coords, int vocab_size) {
     this->size = vocab_size;
-    this->coords = coords;
+    for (int i = 0; i < vocab_size; i++) {
+        this->coords.push_back(coords[i]);
+    }
+    cout << this->norm() << endl;
 }
 
 Histogram::~Histogram() {
-    delete[] this->coords;
+    // delete[] this->coords;
 }
 
 double Histogram::norm() const {
@@ -49,7 +55,8 @@ double Histogram::similarity(const Histogram &a) const {
     assert(this->size == a.size);
     double thisNorm = this->norm();
     double aNorm = a.norm();
-    assert(thisNorm > 0 && aNorm > 0);
+    assert(thisNorm > 0);
+    assert(aNorm > 0);
     
     double s = 0;
     for (int i = 0; i < this->size; i++) {

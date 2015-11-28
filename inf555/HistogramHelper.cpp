@@ -63,27 +63,28 @@ HistogramHelper::HistogramHelper(string filename) {
             
             this->words.push_back(currentWord);
         } else if (l - 1 - this->numberOfWords < numberOfHistograms) { // On lit des histogrammes
+            // cout << "hist " << Line << endl;
             istringstream split(Line);
             string each;
             
             int j = 0;
+            double* currentHistogram = new double[this->numberOfWords];
             while (getline(split, each, ' ')) {
                 if (j == 0) {
                     this->names.push_back(each);
                 } else {
-                    double* currentHistogram = new double[this->numberOfWords];
-                    
                     istringstream conv(each);
                     double x;
-                    if (!(conv >> x)) {
-                        continue;
+                    conv >> x;
+                    if (x != x) {
+                        x = 0;
                     }
-                    currentHistogram[j] = x;
-                    
-                    this->histograms.push_back(new Histogram(currentHistogram, this->numberOfWords));
+                    currentHistogram[j-1] = x;
+                    // cout << currentHistogram[j-1] << endl;
                 }
                 j++;
             }
+            this->histograms.push_back(new Histogram(currentHistogram, this->numberOfWords));
         }
     }
 }
@@ -193,18 +194,21 @@ vector<string> HistogramHelper::findClosestModels(Histogram &h, int numberOfResu
     }
     
     // Algorithme surement lent mais simple
+    int jmax = 0;
+    double dmax = 0;
     for (int i = 0; i < numberOfResults; i++) {
-        double dmin = -1;
-        int jmin = -1;
-        
         for (int j = 0; j < numberOfHistograms; j++) {
-            if (dmin < 0 or (d[j] < dmin and d[j] >= 0)) {
-                dmin = d[j];
-                jmin = j;
+            if (d[j] >= dmax) {
+                dmax = d[j];
+                jmax = j;
             }
         }
-        results.push_back(this->names[jmin]);
-        d[jmin] = -1;
+        
+        results.push_back(this->names[jmax]);
+        cout << d[jmax] << endl;
+        d[jmax] = 0;
+        dmax = 0;
+        jmax = 0;
     }
     
     return results;
