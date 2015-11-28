@@ -60,7 +60,7 @@ float GALIF::gaussian(int i, double u, double v, int cols, int rows) const {
 Mat GALIF::get_filter(int i, int rows, int cols) const {
     assert(rows > 0 && cols > 0);
     
-    Mat fi = Mat(rows, cols, CV_32FC2);
+    Mat fi = Mat(rows, cols, CV_32F);
     for (int l = 0; l < cols; l++) {
         for (int j = 0; j < rows; j++) {
             fi.at<float>(Point(l, j)) = this->gaussian(i, l, j, cols, rows);
@@ -81,8 +81,6 @@ void GALIF::compute_filters(Mat const &I) {
 
 Mat GALIF::filter(int i, cv::Mat const &I) const {
     assert(I.type() == CV_32FC1);
-    int m = I.rows;
-    int p = I.cols;
     
     // Paste the extanded image in a complex matrix
     Mat planes[] = { Mat_<float>(I), Mat::zeros(I.size(), CV_32F) };
@@ -90,15 +88,22 @@ Mat GALIF::filter(int i, cv::Mat const &I) const {
     merge(planes, 2, complexI);
     // Compute its DFT
     dft(complexI, complexI);
-    // Compute point-wise multiplication by the gaussian filter
-    complexI = complexI.mul(this->filters[i]);
     
+    // Compute point-wise multiplication by the gaussian filter
+    Mat planesm[] = { Mat::zeros(complexI.size(), CV_32F), Mat::zeros(complexI.size(), CV_32F) };
+    split(complexI, planesm);
+    for (int h = 0; h < complexI.total(); h++) {
+        planesm[0].at<float>(h) = planesm[0].at<float>(h)*this->filters[i].at<float>(h);
+        planesm[1].at<float>(h) = planesm[1].at<float>(h)*this->filters[i].at<float>(h);
+    }
+    merge(planesm, 2, complexI);
+
     // Compute inverse DFT of the product
     Mat fi = Mat(I.size(), CV_32FC2);
     idft(complexI, fi);
     Mat planes2[] = { Mat::zeros(I.size(), CV_32F), Mat::zeros(I.size(), CV_32F) };
     split(fi, planes2);
-    
+
     // Compute magnitude of the iDFT matrix
     Mat dft_I;
     magnitude(planes2[0], planes2[1], dft_I);
@@ -109,7 +114,6 @@ Mat GALIF::filter(int i, cv::Mat const &I) const {
 //    if (i == 3)
 //        imshow("Filtered", dft_I);
 //    waitKey();
-    
     return dft_I;
 }
 
@@ -182,10 +186,10 @@ vector<array<float, FEAT_SIZE>> GALIF::features(const cv::Mat &I, double p) {
     double tirage;
     double proba = p * (DIV * DIV) / max(int(feats.size()), 1);
     vector<array<float, FEAT_SIZE>> kept_feats;
-    for (vector<array<float, FEAT_SIZE>>::iterator it = feats.begin(); it != feats.end(); ++it) {
+    for (int i = 0; i < feats.size(); i++) {
         tirage = unif_distr(gen);
         if (tirage <= proba) {
-            kept_feats.push_back(*it);
+            kept_feats.push_back(feats[i]);
         }
     }
     
