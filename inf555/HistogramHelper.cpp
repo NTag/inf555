@@ -7,16 +7,23 @@
 //
 
 #include "HistogramHelper.hpp"
+#include "iostream";
+
+using namespace std;
 
 HistogramHelper::HistogramHelper(int wd, vector<float*> *words) {
     this->words = words;
-    this->lenthOfWords = wd;
+    this->lengthOfWords = wd;
     this->numberOfWords = this->words->size();
     this->frequences = new double[this->numberOfWords];
     for (int i = 0; i < this->numberOfWords; i++) {
         this->frequences[i] = 0;
     }
+    this->prehistograms = new vector<int*>;
+    this->names = new vector<string>;
 }
+
+
 HistogramHelper::HistogramHelper(string filename) {
     ifstream File(filename);
     string Line;
@@ -31,13 +38,13 @@ HistogramHelper::HistogramHelper(string filename) {
             int* Numbers = new int[3];
             sscanf(Line.c_str(), "%d %d %d", &Numbers[0], &Numbers[1], &Numbers[2]);
             this->numberOfWords = Numbers[0];
-            this->lenthOfWords = Numbers[1];
+            this->lengthOfWords = Numbers[1];
             numberOfHistograms = Numbers[2];
         } else if (l - 1 <= this->numberOfWords) { // On lit les coordonnées des mots
             istringstream split(Line);
             string each;
             
-            float* currentWord = new float[this->lenthOfWords];
+            float* currentWord = new float[this->lengthOfWords];
             
             int j = 0;
             while (getline(split, each, ' ')) {
@@ -77,13 +84,16 @@ HistogramHelper::HistogramHelper(string filename) {
     }
 }
 
+
 float HistogramHelper::distanceBetweenFeatures(float *w1, float *w2) const {
     float distance = 0;
-    for (int i = 0; i < this->lenthOfWords; i++) {
-        distance = distance + w1[i]*w2[i];
+    for (int i = 0; i < this->lengthOfWords; i++) {
+        distance = distance + w1[i] * w2[i];
     }
     return distance;
 }
+
+
 int HistogramHelper::findClosestWord(float *feature) {
     float dmin = -1;
     int imin = -1;
@@ -99,14 +109,20 @@ int HistogramHelper::findClosestWord(float *feature) {
     return imin;
 }
 
+
 int HistogramHelper::addPreHistogram(string name) {
     int* preh = new int[this->numberOfWords];
+    for (int i = 0; i < this->numberOfWords; i++) {
+        preh[i] = 0;
+    }
     
     this->prehistograms->push_back(preh);
     this->names->push_back(name);
     
     return this->prehistograms->size() - 1;
 }
+
+
 void HistogramHelper::addFeatureForPreHistogram(int i, float *feature) {
     int closestWord = findClosestWord(feature);
     this->prehistograms[i][closestWord]++;
@@ -115,11 +131,14 @@ void HistogramHelper::addFeatureForPreHistogram(int i, float *feature) {
     this->frequences[closestWord]++;
 }
 
+
 void HistogramHelper::computeFrequences() {
     for (int i = 0; i < this->numberOfWords; i++) {
         this->frequences[i] = this->frequences[i] / this->numberOfWords;
     }
 }
+
+
 void HistogramHelper::computeHistograms() {
     this->computeFrequences();
     int numberOfHistograms = this->prehistograms->size();
@@ -139,6 +158,7 @@ void HistogramHelper::computeHistograms() {
     this->names = &newNames;
 }
 
+
 bool HistogramHelper::saveHistograms(string filename) {
     ofstream file;
     file.open(filename);
@@ -146,12 +166,12 @@ bool HistogramHelper::saveHistograms(string filename) {
     int numberOfHistograms = this->prehistograms->size();
     
     // Première ligne : numbre-de-mots longueur-d'un-mot nombre-de-vues
-    file << this->numberOfWords << " " << this->lenthOfWords << numberOfHistograms << "\n";
+    file << this->numberOfWords << " " << this->lengthOfWords << numberOfHistograms << "\n";
     
     // Ensuite on stocke les mots : index coordonnées
     for (int i = 0; i < this->numberOfWords; i++) {
         // file << i;
-        for (int j = 0; j < this->lenthOfWords; j++) {
+        for (int j = 0; j < this->lengthOfWords; j++) {
             file << " " << this->words->at(i)[j];
         }
         file << "\n";

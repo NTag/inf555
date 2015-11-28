@@ -28,6 +28,7 @@
 #include "DistributedViews.hpp"
 #include "Point3.hpp"
 #include "Vocabulary.hpp"
+#include "HistogramHelper.hpp"
 
 using namespace std;
 using namespace cv;
@@ -37,15 +38,16 @@ using namespace cv;
 char* path;
 vector<string> files;
 string currentFile = "";
-int numberOfViews = 70;
+int numberOfViews = 10;
 int currentView = numberOfViews+1;
 DistributedViews sphere(numberOfViews);
 Point3* directions;
 CannyFilter canny = CannyFilter(10, 30);
-GALIF galif = GALIF(0.13, 3, 4, 8);
+GALIF* galif = new GALIF(0.13, 3, 4, 8);
 double proba = 1. / numberOfViews;
 vector<float*> features_set;
-Vocabulary vocab;
+Vocabulary* vocab = new Vocabulary();
+HistogramHelper* helper;
 
 
 /* ***** Utils functions ***** */
@@ -119,11 +121,20 @@ void processImage(float* depth) {
     // Compute features
     cout << "Exctraction de features : démarrage" << endl;
     edges.convertTo(edges, CV_32F);
-    vector<float*> features = galif.features(edges, proba);
-    for (vector<float*>::iterator it = features.begin(); it != features.end(); ++it) {
-        features_set.push_back(*it);
+    vector<float*> features = galif->features(edges, proba);
+    if (vocab->kMeansDone) { // Create histograms
+        int idx = helper->addPreHistogram(currentFile);
+        for (vector<float*>::iterator it = features.begin(); it != features.end(); ++it) {
+            helper->addFeatureForPreHistogram(idx, *it);
+        }
+    } else { // Prepare for vocabulary creation
+        for (vector<float*>::iterator it = features.begin(); it != features.end(); ++it) {
+            features_set.push_back(*it);
+        }
     }
     cout << "Extraction de features : terminé" << endl;
+    
+    
 }
 
 
@@ -234,12 +245,18 @@ void draw() {
         currentView++;
     } else {
         if (files.empty()) {
-            if (!vocab.kMeansDone) {
+            if (!vocab->kMeansDone) {
                 cout << "Création du vocabulaire visuel : démarrage" << endl;
-                vocab = Vocabulary(10, features_set, 256);
-                vocab.kMeans();
-                cout << "MSE : " << vocab.MSE << endl;
+                vocab = new Vocabulary(10, features_set, 256);
+                vocab->kMeans();
+                cout << "MSE : " << vocab->MSE << endl;
                 cout << "Création du vocabulaire visuel : terminé" << endl;
+                
+                vector<float*>* words = new vector<float*>;
+                for (int i = 0; i < vocab->size; i++) {
+                    words->push_back(vocab->centroids[i]);
+                }
+                helper = new HistogramHelper(galif->k * galif->n * galif->n, words);
                 
                 // Compute all features
                 proba = 1.;
@@ -248,10 +265,10 @@ void draw() {
                 
                 glutPostRedisplay();
             } else {
+                helper->computeHistograms();
+                helper->saveHistograms("./histograms");
                 return;
             }
-            
-            return;
         }
         currentView = 1;
         currentFile = files.back();

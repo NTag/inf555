@@ -16,17 +16,15 @@
 #include <sstream>
 #include "Histogram.hpp"
 
-using namespace std;
-
 class HistogramHelper {
 public:
-    HistogramHelper(int wd, vector<float*>* words); // wd : longueur des mots
-    HistogramHelper(string filename); // Load histograms from a file
+    HistogramHelper(int wd, std::vector<float*>* words); // wd : longueur des mots
+    HistogramHelper(std::string filename); // Load histograms from a file
     
     int findClosestWord(float* feature);
     float distanceBetweenFeatures(float* w1, float* w2) const;
     
-    int addPreHistogram(string name); // Ajouter un nouveau pre-histogramme (une nouvelle vue) - retourne son index
+    int addPreHistogram(std::string name); // Ajouter un nouveau pre-histogramme (une nouvelle vue) - retourne son index
     void addFeatureForPreHistogram(int i, float* feature); // Prendre en compte une nouvelle feature pour la vue numéro i
     
     void computeFrequences();
@@ -34,16 +32,16 @@ public:
     
     // vector<string> findClosestModels(Histogram* h, int numberOfResults);
     
-    bool saveHistograms(string filename);
-    vector<Histogram*>* histograms; // Histogrammes des différents modèles
+    bool saveHistograms(std::string filename);
+    std::vector<Histogram*>* histograms; // Histogrammes des différents modèles
     
 private:
-    int lenthOfWords; // Longueur des mots et des features
+    int lengthOfWords; // Longueur des mots et des features
     int numberOfWords; // Nombre de mots
-    vector<float*>* words;
-    vector<int*>* prehistograms; // Préhistogrammes : pas normalisés en tenant compte de la fréquence
+    std::vector<float*>* words;
+    std::vector<int*>* prehistograms; // Préhistogrammes : pas normalisés en tenant compte de la fréquence
     double* frequences; // Fréquences des mots
-    vector<string>* names;
+    std::vector<std::string>* names;
 };
 
 #endif /* HistogramHelper_hpp */
