@@ -16,6 +16,7 @@ HistogramHelper::HistogramHelper(int wd, vector<float*> words) {
     this->lengthOfWords = wd;
     this->numberOfWords = this->words.size();
     this->frequences = new double[this->numberOfWords];
+    this->numberOfFeatures = 0;
     for (int i = 0; i < this->numberOfWords; i++) {
         this->frequences[i] = 0;
     }
@@ -127,13 +128,17 @@ void HistogramHelper::addFeatureForPreHistogram(int i, float *feature) {
     
     // On met à jour dans la foulée les fréquences
     this->frequences[closestWord]++;
+    this->numberOfFeatures++;
 }
 
 
 void HistogramHelper::computeFrequences() {
     for (int i = 0; i < this->numberOfWords; i++) {
-        this->frequences[i] = this->frequences[i] / this->numberOfWords;
+        cout << this->frequences[i] << " ";
+        this->frequences[i] = this->frequences[i] / this->numberOfFeatures;
+        cout << this->frequences[i] << ";";
     }
+    cout << endl;
 }
 
 

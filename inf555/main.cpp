@@ -38,7 +38,7 @@ using namespace cv;
 char* path;
 vector<string> files;
 string currentFile = "";
-int numberOfViews = 10;
+int numberOfViews = 50;
 int currentView = numberOfViews+1;
 DistributedViews sphere(numberOfViews);
 Point3* directions;

@@ -42,6 +42,7 @@ private:
     std::vector<int*> prehistograms; // Préhistogrammes : pas normalisés en tenant compte de la fréquence
     double* frequences; // Fréquences des mots
     std::vector<std::string> names;
+    int numberOfFeatures;
 };
 
 #endif /* HistogramHelper_hpp */
