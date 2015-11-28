@@ -252,9 +252,9 @@ void draw() {
                 cout << "MSE : " << vocab->MSE << endl;
                 cout << "Création du vocabulaire visuel : terminé" << endl;
                 
-                vector<float*>* words = new vector<float*>;
+                vector<float*> words;
                 for (int i = 0; i < vocab->size; i++) {
-                    words->push_back(vocab->centroids[i]);
+                    words.push_back(vocab->centroids[i]);
                 }
                 helper = new HistogramHelper(galif->k * galif->n * galif->n, words);
                 
@@ -266,7 +266,7 @@ void draw() {
                 glutPostRedisplay();
             } else {
                 helper->computeHistograms();
-                helper->saveHistograms("./histograms");
+                helper->saveHistograms("/Users/ntag/Documents/X/2015-2016/INF555/inf555/histograms");
                 return;
             }
         }

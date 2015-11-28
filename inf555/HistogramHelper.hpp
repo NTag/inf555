@@ -18,7 +18,7 @@
 
 class HistogramHelper {
 public:
-    HistogramHelper(int wd, std::vector<float*>* words); // wd : longueur des mots
+    HistogramHelper(int wd, std::vector<float*> words); // wd : longueur des mots
     HistogramHelper(std::string filename); // Load histograms from a file
     
     int findClosestWord(float* feature);
@@ -30,18 +30,18 @@ public:
     void computeFrequences();
     void computeHistograms(); // Calculer les histogrammes et supprimer les pré-histogrammes
     
-    std::vector<string> findClosestModels(Histogram &h, int numberOfResults);
+    std::vector<std::string> findClosestModels(Histogram &h, int numberOfResults);
     
     bool saveHistograms(std::string filename);
-    std::vector<Histogram*>* histograms; // Histogrammes des différents modèles
+    std::vector<Histogram*> histograms; // Histogrammes des différents modèles
     
 private:
     int lengthOfWords; // Longueur des mots et des features
     int numberOfWords; // Nombre de mots
-    std::vector<float*>* words;
-    std::vector<int*>* prehistograms; // Préhistogrammes : pas normalisés en tenant compte de la fréquence
+    std::vector<float*> words;
+    std::vector<int*> prehistograms; // Préhistogrammes : pas normalisés en tenant compte de la fréquence
     double* frequences; // Fréquences des mots
-    std::vector<std::string>* names;
+    std::vector<std::string> names;
 };
 
 #endif /* HistogramHelper_hpp */

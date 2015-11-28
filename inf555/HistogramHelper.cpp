@@ -11,16 +11,14 @@
 
 using namespace std;
 
-HistogramHelper::HistogramHelper(int wd, vector<float*> *words) {
+HistogramHelper::HistogramHelper(int wd, vector<float*> words) {
     this->words = words;
     this->lengthOfWords = wd;
-    this->numberOfWords = this->words->size();
+    this->numberOfWords = this->words.size();
     this->frequences = new double[this->numberOfWords];
     for (int i = 0; i < this->numberOfWords; i++) {
         this->frequences[i] = 0;
     }
-    this->prehistograms = new vector<int*>;
-    this->names = new vector<string>;
 }
 
 
@@ -57,7 +55,7 @@ HistogramHelper::HistogramHelper(string filename) {
                 j++;
             }
             
-            this->words->push_back(currentWord);
+            this->words.push_back(currentWord);
         } else if (l - 1 - this->numberOfWords < numberOfHistograms) {
             istringstream split(Line);
             string each;
@@ -65,7 +63,7 @@ HistogramHelper::HistogramHelper(string filename) {
             int j = 0;
             while (getline(split, each, ' ')) {
                 if (j == 0) {
-                    this->names->push_back(each);
+                    this->names.push_back(each);
                 } else {
                     double* currentHistogram = new double[this->numberOfWords];
                     
@@ -76,7 +74,7 @@ HistogramHelper::HistogramHelper(string filename) {
                     }
                     currentHistogram[j] = x;
                     
-                    this->histograms->push_back(new Histogram(currentHistogram, this->numberOfWords));
+                    this->histograms.push_back(new Histogram(currentHistogram, this->numberOfWords));
                 }
                 j++;
             }
@@ -99,7 +97,7 @@ int HistogramHelper::findClosestWord(float *feature) {
     int imin = -1;
     
     for (int i = 0; i < this->numberOfWords; i++) {
-        float cd = this->distanceBetweenFeatures(feature, this->words->at(i));
+        float cd = this->distanceBetweenFeatures(feature, this->words[i]);
         if (dmin < 0 or cd < dmin) {
             dmin = cd;
             imin = i;
@@ -116,10 +114,10 @@ int HistogramHelper::addPreHistogram(string name) {
         preh[i] = 0;
     }
     
-    this->prehistograms->push_back(preh);
-    this->names->push_back(name);
+    this->prehistograms.push_back(preh);
+    this->names.push_back(name);
     
-    return this->prehistograms->size() - 1;
+    return this->prehistograms.size() - 1;
 }
 
 
@@ -141,31 +139,31 @@ void HistogramHelper::computeFrequences() {
 
 void HistogramHelper::computeHistograms() {
     this->computeFrequences();
-    int numberOfHistograms = this->prehistograms->size();
+    int numberOfHistograms = this->prehistograms.size();
     vector<string> newNames;
     
-    while (!this->prehistograms->empty()) {
-        int* cpreh = this->prehistograms->back();
+    while (!this->prehistograms.empty()) {
+        int* cpreh = this->prehistograms.back();
         
-        this->histograms->push_back(new Histogram(cpreh, this->numberOfWords, this->frequences, numberOfHistograms));
-        newNames.push_back(this->names->back());
+        this->histograms.push_back(new Histogram(cpreh, this->numberOfWords, this->frequences, numberOfHistograms));
+        newNames.push_back(this->names.back());
         
-        this->prehistograms->pop_back();
-        this->names->pop_back();
+        this->prehistograms.pop_back();
+        this->names.pop_back();
         delete[] cpreh;
     }
     
-    this->names = &newNames;
+    this->names = newNames;
 }
 
 
 vector<string> HistogramHelper::findClosestModels(Histogram &h, int numberOfResults) {
     vector<string> results;
-    int numberOfHistograms = this->histograms->size();
+    int numberOfHistograms = this->histograms.size();
     
     double* d = new double[numberOfHistograms];
     for (int i = 0; i < numberOfHistograms; i++) {
-        d[i] = this->histograms->at(i)->similarity(h);
+        d[i] = this->histograms[i]->similarity(h);
     }
     
     // Algorithme surement lent mais simple
@@ -179,7 +177,7 @@ vector<string> HistogramHelper::findClosestModels(Histogram &h, int numberOfResu
                 jmin = j;
             }
         }
-        results.push_back(this->names->at(jmin));
+        results.push_back(this->names[jmin]);
         d[jmin] = -1;
     }
     
@@ -191,25 +189,25 @@ bool HistogramHelper::saveHistograms(string filename) {
     ofstream file;
     file.open(filename);
     
-    int numberOfHistograms = this->prehistograms->size();
+    int numberOfHistograms = this->histograms.size();
     
     // Première ligne : numbre-de-mots longueur-d'un-mot nombre-de-vues
-    file << this->numberOfWords << " " << this->lengthOfWords << numberOfHistograms << "\n";
+    file << this->numberOfWords << " " << this->lengthOfWords << " " << numberOfHistograms << "\n";
     
     // Ensuite on stocke les mots : index coordonnées
     for (int i = 0; i < this->numberOfWords; i++) {
         // file << i;
         for (int j = 0; j < this->lengthOfWords; j++) {
-            file << " " << this->words->at(i)[j];
+            file << " " << this->words[i][j];
         }
         file << "\n";
     }
     
     // Puis enfin on stocke les histogrammes
     for (int i = 0; i < numberOfHistograms; i++) {
-        file << this->names->at(i);
+        file << this->names[i];
         for (int j = 0; j < numberOfWords; j++) {
-            file << " " << this->histograms->at(i)->coords[j];
+            file << " " << this->histograms[i]->coords[j];
         }
         file << "\n";
     }
