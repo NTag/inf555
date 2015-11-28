@@ -159,6 +159,34 @@ void HistogramHelper::computeHistograms() {
 }
 
 
+vector<string> HistogramHelper::findClosestModels(Histogram &h, int numberOfResults) {
+    vector<string> results;
+    int numberOfHistograms = this->histograms->size();
+    
+    double* d = new double[numberOfHistograms];
+    for (int i = 0; i < numberOfHistograms; i++) {
+        d[i] = this->histograms->at(i)->similarity(h);
+    }
+    
+    // Algorithme surement lent mais simple
+    for (int i = 0; i < numberOfResults; i++) {
+        double dmin = -1;
+        int jmin = -1;
+        
+        for (int j = 0; j < numberOfHistograms; j++) {
+            if (dmin < 0 or (d[j] < dmin and d[j] >= 0)) {
+                dmin = d[j];
+                jmin = j;
+            }
+        }
+        results.push_back(this->names->at(jmin));
+        d[jmin] = -1;
+    }
+    
+    return results;
+}
+
+
 bool HistogramHelper::saveHistograms(string filename) {
     ofstream file;
     file.open(filename);
