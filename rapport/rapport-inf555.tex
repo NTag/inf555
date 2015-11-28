@@ -163,7 +163,7 @@ Afin d'améliorer les contours, on applique un filtre de Gabor à chaque image, 
 Cela permet de renforcer les contours dans la direction choisie et d'atténuer les autres.
 On calcule pour ça la transformée de Fourier discrète d'une image (avec OpenCV), on la multiplie pixel par pixel au filtre (dans le domaine spectral), puis on revient dans le domaine spatial.
 L'article restait assez flou sur les détails techniques de cette partie, qui s'est révélée être chronophage et difficile.
-Nous avons en effet rencontré quelques difficulté, en particulier avec définition du filtre: la formule définissant le filtre dans le domaine spectral était valable pour des fonctions continues mais devait être adaptée pour un usage dans le cas discret.
+Nous avons en effet rencontré quelques difficultés, en particulier avec la définition du filtre: la formule définissant le filtre dans le domaine spectral était valable pour des fonctions continues mais devait être adaptée pour un usage dans le cas discret.
 Enfin, les résultats de filtrage obtenus présentent des artefacts ou effets de bord que nous n'avons pas réussi à éliminer.
 
 \paragraph{Calcul des \emph{features}.}
@@ -175,7 +175,7 @@ Nous stockons ces vecteurs sous forme de tableaux de flottants.
 Nous avons pu constater la difficulté de gérer correctement la mémoire en \textbf{C++}, notamment quand on emploie des \emph{pointeurs}.
 Finalement, au lieu de stocker les vecteurs avec des \verb|float*|, nous avons utilisé le conteneur fourni par la librairie standard \verb|std::array<float, FEAT_SIZE>|, ce qui nous a permis de nous affranchir de l'usage des pointeurs.
 
-\paragraph{Constitution d'un vocabulaire visuel?}
+\paragraph{Constitution d'un vocabulaire visuel.}
 On élimine aléatoirement une partie de ces mots afin de n'en garder qu'un million.
 Cela représente néanmoins un volume d'environ \num{256}~Mo.
 Grâce à l'algorithme \emph{k-means}, on réduit ce million de mots à un millier, qui vont composer notre alphabet.
@@ -193,7 +193,7 @@ En effet, avec \num{1800} modèles, 50 projections par modèles et \num{1024} mo
 
 On commence par charger en mémoire l'alphabet et les histogrammes des modèles à partir du fichier dans lequel nous avions sauvegardé ces données.
 
-Lorsqu'on donne un croquis au programme, on calcule son histogramme comme précédemment (on applique Canny, on filtre par Gabor suivant différentes orientations et on déceoupe en blocs pour calculer les \emph{featuers}).
+Lorsqu'on donne un croquis au programme, on calcule son histogramme comme précédemment (on applique Canny, on filtre par Gabor suivant différentes orientations et on déceoupe en blocs pour calculer les \emph{features}).
 Ensuite on cherche simplement de quels histogrammes il est le plus proche.
 
 
