@@ -300,10 +300,10 @@ void query(string filename) {
     vector<float*> features = galif->features(edges, proba);
     waitKey(0);
     
-    // Calculer l'histogramme
-    
-    
-    // Puis trouver le modèle
+    vector<string> models = helper->findClosestModels(features, 2);
+    for (int i = 0; i < models.size(); i++) {
+        cout << models[i] << endl;
+    }
 }
 
 

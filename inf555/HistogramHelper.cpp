@@ -167,9 +167,20 @@ void HistogramHelper::computeHistograms() {
 }
 
 vector<string> HistogramHelper::findClosestModels(vector<float*> features, int numberOfResults) {
-    // On calcul l'histogramme
-    vector<string> results;
-    return results;
+    // On calcule les counts
+    int* counts = new int[this->numberOfWords];
+    for (int i = 0; i < this->numberOfWords; i++) {
+        counts[i] = 0;
+    }
+    for (int i = 0; i < features.size(); i++) {
+        int closestWord = findClosestWord(features[i]);
+        counts[closestWord]++;
+    }
+    
+    // On génère l'histogramme
+    Histogram h(counts, this->numberOfWords, this->frequences, this->histograms.size());
+    
+    return this->findClosestModels(h, numberOfResults);
 }
 
 vector<string> HistogramHelper::findClosestModels(Histogram &h, int numberOfResults) {
