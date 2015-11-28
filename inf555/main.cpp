@@ -286,16 +286,47 @@ void draw() {
     glutPostRedisplay();
 }
 
-
+void query(string filename) {
+    Mat img = imread(filename);
+    cvtColor(img, img, COLOR_BGR2GRAY);
+    imshow("Originale", img);
+    waitKey(0);
+    
+    Mat edges = canny.detectEdges(img);
+    cout << "Canny : terminé" << endl;
+    imshow("Edges", edges);
+    
+    edges.convertTo(edges, CV_32F);
+    vector<float*> features = galif->features(edges, proba);
+    waitKey(0);
+    
+    // Calculer l'histogramme
+    
+    
+    // Puis trouver le modèle
+}
 
 
 int main(int argc, char** argv) {
     /* OFF preprocessing */
-    cout << "Preprocessing images\n";
-    if (argc < 2) {
-        cout << "Usage: preprocessing folder\n";
+    cout << "INF555\n";
+    if (argc < 3) {
+        cout << "Usage: inf555 preprocess folder\n";
+        cout << "Usage: inf555 query histograms image\n";
         return EXIT_FAILURE;
     }
+    
+    string action = argv[1];
+    if (action == "query") {
+        cout << "Query on database\n";
+        helper = new HistogramHelper(argv[2]);
+        
+        query(argv[3]);
+        
+        return 0;
+    }
+    
+    cout << "Preprocessing\n";
     
     glutInit(&argc, argv);
     
@@ -305,7 +336,7 @@ int main(int argc, char** argv) {
     glutInitWindowPosition(0, 0);
     glutCreateWindow("GLUT Program");
     
-    path = argv[1];
+    path = argv[2];
     loadFilesFromFolder(path);
     
     glEnable(GL_DEPTH_TEST);
