@@ -164,6 +164,8 @@ Cela permet de renforcer les contours dans la direction choisie et d'atténuer l
 On calcule pour ça la transformée de Fourier discrète d'une image (avec OpenCV), on la multiplie pixel par pixel au filtre (dans le domaine spectral), puis on revient dans le domaine spatial.
 L'article restait assez flou sur les détails techniques de cette partie, qui s'est révélée être chronophage et difficile.
 Nous avons en effet rencontré quelques difficultés, en particulier avec la définition du filtre: la formule définissant le filtre dans le domaine spectral était valable pour des fonctions continues mais devait être adaptée pour un usage dans le cas discret.
+De plus, la multiplication de matrices complexes implémentées dans OpenCV n'a pas fonctionné.
+Ce problème a été particulièrement difficile à détecter mais a pu être résolu.
 Enfin, les résultats de filtrage obtenus présentent des artefacts ou effets de bord que nous n'avons pas réussi à éliminer.
 
 \paragraph{Calcul des \emph{features}.}
@@ -199,7 +201,50 @@ Ensuite on cherche simplement de quels histogrammes il est le plus proche.
 
 \section{Résultats}
 
-À venir...
+\subsection{Pré-traitement}
+
+\paragraph{Filtre de Gabor/}
+On a commencé par vérifier que le filtre de Gabor donnait des résultats attendus, à savoir, intensifier les contours dans une certaine direction.
+Sur la figure~\vref{fig:result-gabor}, on peut constater que pour $\theta = \pi/4$, ce résultat est obtenu, malgré quelques effets de bords.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=0.4\textwidth]{images/chair-gabor}
+        \caption{Filtrage d'une chaise par Gabor.\label{fig:result-gabor}}
+    \end{center}
+\end{figure}
+
+\paragraph{Chaine de traitement complète/}
+Pour constituer notree vocabulaire visuel et notre base de données d'histogrammes, on a choisi les paramètres suivants:
+\begin{itemize}
+    \item nombre de modèles 3D: 100 (chaises, voitures, avions, \ldots);
+    \item nombre de vues par modèle: 50;
+    \item taille du vocabulaire: 50 mots\footnote{on a ainsi le même rapport nombre total de vues sur taille du vocabulaire que les auteurs, à savoir 100.}.
+\end{itemize}
+Le temps d'exécution a été d'environ 50 minutes. Il est à noter que la mémoire utilisée n'a pas excédée 150 MB.
+
+On obtient alors un fichier contenant:
+\begin{itemize}
+    \item la longueur des mots, le nombres de mots (taille du vocabulaire) et le nombre de total de vues sur la première ligne;
+    \item une ligne par mot: la fréquence de ce mot dans le vocabulaire, suivie des 256 coordonnées du mot;
+    \item une ligne par vue: le nom du modèle associé, suivi des valeurs de l'histogramme.
+\end{itemize}
+Ce fichier pèse quelques MB.
+
+
+\subsection{Requêtes}
+L'étape de \emph{querying} est beaucoup plus rapide.
+Après l'importation des données du fichier d'histogrammes, qui s'effectue quasiment instantanément, on calcule simplement un histogramme.
+Ensuite, on cherche les histogrammes les plus proches dans la base de données.
+On peut choisir le nombre de résultats souhaités.
+La figure~\vref{fig:query-result} montre les résultats obtenus pour un croquis donné en entrée.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.3\textwidth]{images/query-sketch}\hfill
+        \includegraphics[width=.3\textwidth]{images/query-result1}
+        \includegraphics[width=.3\textwidth]{images/query-result2}
+    \end{center}
+\end{figure}
+
 
 \section{Pistes d'amélioration}
 
