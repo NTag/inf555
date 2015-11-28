@@ -43,7 +43,7 @@ int currentView = numberOfViews+1;
 DistributedViews sphere(numberOfViews);
 Point3* directions;
 CannyFilter canny = CannyFilter(10, 30);
-GALIF* galif = new GALIF(0.13, 3, 4, 8);
+GALIF* galif = new GALIF(0.13, 5, 4, 8);
 double proba = 1. / numberOfViews;
 vector<float*> features_set;
 Vocabulary* vocab = new Vocabulary();
@@ -119,7 +119,7 @@ void processImage(float* depth) {
 //    waitKey(0);
     
     // Compute features
-    cout << "Exctraction de features : démarrage" << endl;
+    cout << "Extraction de features : démarrage" << endl;
     edges.convertTo(edges, CV_32F);
     vector<float*> features = galif->features(edges, proba);
     if (vocab->kMeansDone) { // Create histograms
@@ -247,10 +247,10 @@ void draw() {
         if (files.empty()) {
             if (!vocab->kMeansDone) {
                 cout << "Création du vocabulaire visuel : démarrage" << endl;
-                vocab = new Vocabulary(10, features_set, 256);
+                vocab = new Vocabulary(20, features_set, 256);
                 vocab->kMeans();
                 cout << "MSE : " << vocab->MSE << endl;
-                cout << "Création du vocabulaire visuel : terminé" << endl;
+                cout << "Création du vocabulaire visuel : terminé" << endl << endl;
                 
                 vector<float*> words;
                 for (int i = 0; i < vocab->size; i++) {
@@ -308,6 +308,79 @@ void query(string filename) {
 
 
 int main(int argc, char** argv) {
+//    Mat gf = galif->get_filter(1, 1600, 1600);
+//    string tygf = type2str(gf.type());
+//    printf("Matrix: %s %dx%d \n", tygf.c_str(), gf.cols, gf.rows );
+//    
+//    
+//    Mat gf_space;
+//    idft(gf, gf_space);
+//
+////    int step = gf.rows/2;
+////    Mat q0(gf, Rect(0, 0, step, step));
+////    Mat q1(gf, Rect(step, 0, step, step));
+////    Mat q2(gf, Rect(0, step, step, step));
+////    Mat q3(gf, Rect(step, step, step, step));
+////    Mat tmp;
+////    q0.copyTo(tmp);
+////    q3.copyTo(q0);
+////    tmp.copyTo(q3);
+////    q1.copyTo(tmp);
+////    q2.copyTo(q1);
+////    tmp.copyTo(q2);
+//    
+//    Mat planes[] = {Mat::zeros(gf.size(), CV_32F), Mat::zeros(gf.size(), CV_32F)};
+//    split(gf, planes);
+//    magnitude(planes[0], planes[1], planes[0]);
+//    planes[0] += 1;
+//    log(planes[0], planes[0]);
+//    planes[0] *= 20.0;
+//    normalize(planes[0], planes[0], 0, 1, CV_MINMAX);
+//    imshow("IMG", planes[0]);
+//    waitKey();
+//    
+//    
+//    string tygf_s = type2str(gf_space.type());
+//    printf("Matrix: %s %dx%d \n", tygf_s.c_str(), gf_space.cols, gf_space.rows );
+//    int stepp = gf_space.rows/2;
+//    Mat p0(gf_space, Rect(0, 0, stepp, stepp));
+//    Mat p1(gf_space, Rect(stepp, 0, stepp, stepp));
+//    Mat p2(gf_space, Rect(0, stepp, stepp, stepp));
+//    Mat p3(gf_space, Rect(stepp, stepp, stepp, stepp));
+//    Mat tmpp;
+//    p0.copyTo(tmpp);
+//    p3.copyTo(p0);
+//    tmpp.copyTo(p3);
+//    p1.copyTo(tmpp);
+//    p2.copyTo(p1);
+//    tmpp.copyTo(p2);
+//    
+//    split(gf_space, planes);
+//    magnitude(planes[0], planes[1], planes[0]);
+//    planes[0] += 1;
+//    log(planes[0], planes[0]);
+//    planes[0] *= 20.0;
+//    normalize(planes[0], planes[0], 0, 1, CV_MINMAX);
+////    for (int i = 0; i < planes[0].total(); i++) {
+////        assert(0 <= planes[0].at<float>(i) && planes[0].at<float>(i) <= 1);
+////    }
+//    
+//    imshow("IMG", planes[0]);waitKey();
+//    //
+//    //    Mat dft_img = Mat(getOptimalDFTSize(gf.rows), getOptimalDFTSize(gf.cols), CV_32FC2);
+//    //    idft(gf, dft_img);
+//    //    imshow("IMG", dft_img);waitKey();
+//    //
+//    //    double minFreq, maxFreq;
+//    //    Point minPt, maxPt;
+//    //    minMaxLoc(dft_img, &minFreq, &maxFreq, &minPt, &maxPt);
+//    //    cout << maxPt << endl;
+////    img.convertTo(img, CV_32F);
+////    galif->compute_filters(img);
+////    Mat f = galif->filter(0, img);
+////    imshow("Filter", f);waitKey();
+//    return 0;
+    
     /* OFF preprocessing */
     cout << "INF555\n";
     if (argc < 3) {

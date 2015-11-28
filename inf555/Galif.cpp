@@ -41,10 +41,13 @@ GALIF::~GALIF() {
     delete[] this->filters;
 }
 
-float GALIF::gaussian(int i, double u, double v) const {
+float GALIF::gaussian(int i, double u, double v, int cols, int rows) const {
     assert(0 <= i && i < this->k);
     
     double theta = i * M_PI / this->k;
+   
+    u = 2 * M_PI * u / cols;
+    v = 2 * M_PI * v / rows;
     
     double ut = u * cos(theta) - v * sin(theta);
     double vt = u * sin(theta) + v * cos(theta);
@@ -58,7 +61,7 @@ Mat GALIF::get_filter(int i, int rows, int cols) const {
     Mat fi = Mat(rows, cols, CV_32FC2);
     for (int l = 0; l < cols; l++) {
         for (int j = 0; j < rows; j++) {
-            fi.at<float>(Point(l, j)) = this->gaussian(i, l, j);
+            fi.at<float>(Point(l, j)) = this->gaussian(i, l, j, cols, rows);
         }
     }
     
@@ -66,8 +69,8 @@ Mat GALIF::get_filter(int i, int rows, int cols) const {
 }
 
 void GALIF::compute_filters(Mat const &I) {
-    int rows = getOptimalDFTSize(I.rows);
-    int cols = getOptimalDFTSize(I.cols);
+    int rows = I.rows;
+    int cols = I.cols;
     
     for (int i = 0; i < this->k; i++) {
         this->filters[i] = this->get_filter(i, rows, cols);
@@ -78,15 +81,9 @@ Mat GALIF::filter(int i, cv::Mat const &I) const {
     assert(I.type() == CV_32FC1);
     int m = I.rows;
     int p = I.cols;
-    int dft_m = getOptimalDFTSize(I.rows);
-    int dft_p = getOptimalDFTSize(I.cols);
-    
-    // Extand the image matrix
-    Mat padded;
-    copyMakeBorder(I, padded, 0, dft_m - m, 0, dft_p - p, BORDER_CONSTANT, Scalar::all(0));
     
     // Paste the extanded image in a complex matrix
-    Mat planes[] = { Mat_<float>(padded), Mat::zeros(padded.size(), CV_32F) };
+    Mat planes[] = { Mat_<float>(I), Mat::zeros(I.size(), CV_32F) };
     Mat complexI;
     merge(planes, 2, complexI);
     // Compute its DFT
@@ -107,7 +104,8 @@ Mat GALIF::filter(int i, cv::Mat const &I) const {
     log(dft_I, dft_I);
     normalize(dft_I, dft_I, 0, 1, CV_MINMAX);
     
-//    imshow("Filtered", dft_I);
+    if (i == 3)
+        imshow("Filtered", dft_I);
 //    waitKey();
     
     return dft_I;
@@ -115,11 +113,12 @@ Mat GALIF::filter(int i, cv::Mat const &I) const {
 
 // Returns th features of some keypoints in the image. The keypoints are chosen uniformly with probability p
 vector<float*> GALIF::features(const cv::Mat &I, double p) {
+    // Compute filtered image
     this->compute_filters(I);
-    
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    default_random_engine gen(seed);
-    uniform_real_distribution<double> unif_distr(0.0, 1.0);
+    Mat* R = new Mat[this->k];
+    for (int i = 0; i < this->k; i++) {
+        R[i] = this->filter(i, I);
+    }
     
     // Compute 32 x 32 = 1024 keypoints evenly distributed
     int const DIV = 32;
@@ -139,24 +138,11 @@ vector<float*> GALIF::features(const cv::Mat &I, double p) {
     bl_length = (bl_length % 2 == 0) ? bl_length - 1 : bl_length;
     
     vector<float*> feats;
-    int count_kp = 0;
-    double tirage;
     int n = this->n;
     int bl_step, c_step;
-    
-    Mat* R = new Mat[this->k];
-    for (int i = 0; i < this->k; i++) {
-        R[i] = this->filter(i, I);
-    }
-    
-    // Foreach keypoint, we determine whether we keep it or not; if yes, we divide the area around into n x n cells
+
+    // Foreach keypoint, we divide the area around into n x n cells
     for (vector<Point>::iterator it = keypoints.begin(); it != keypoints.end(); ++it) {
-        tirage = unif_distr(gen);
-        if (tirage > p) {
-            continue;
-        }
-        count_kp += 1;
-        
         float* feat = new float[this->k * this->n * this->n];
         
         // Iteration on the Gabor filter orientations
@@ -179,22 +165,38 @@ vector<float*> GALIF::features(const cv::Mat &I, double p) {
         // Normalize the feature
         norm = sqrt(norm);
         if (norm > 0) {
-            for (int i = 0; i < this->k*this->n*this->n; i++) {
+            for (int i = 0; i < this->k * this->n * this->n; i++) {
                 feat[i] /= norm;
             }
             
             // Add the feature to result
             feats.push_back(feat);
-        } else {
-            count_kp -= 1;
         }
-     }
+    }
+    
+    // We keep only a certain amount of features in order to have 1024*p features by view at the end
+    unsigned seed = unsigned(std::chrono::system_clock::now().time_since_epoch().count());
+    default_random_engine gen(seed);
+    uniform_real_distribution<double> unif_distr(0.0, 1.0);
+    double tirage;
+    double proba = p * (DIV * DIV) / max(int(feats.size()), 1);
+    vector<float*> kept_feats;
+    for (vector<float*>::iterator it = feats.begin(); it != feats.end(); ++it) {
+        tirage = unif_distr(gen);
+        if (tirage <= proba) {
+//            for (int j = 0; j < this->k * this->n * this->n; j++) {
+//                cout << *it[j] << "; ";
+//            }
+//            cout << endl;
+            kept_feats.push_back(*it);
+        }
+    }
     
     // Free memory
     delete[] R;
     
-    cout << "Nombre de points-cles retenus : " << count_kp << endl;
-    return feats;
+    cout << "Nombre de features : " << int(kept_feats.size()) << endl;
+    return kept_feats;
 }
 
 
