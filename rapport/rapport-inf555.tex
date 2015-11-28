@@ -203,16 +203,16 @@ Ensuite on cherche simplement de quels histogrammes il est le plus proche.
 
 \section{Pistes d'amélioration}
 
-Tout au long du projet, nous avons fait des choix, car l'article proposait souvent plusieurs solutions.\\
+Tout au long du projet, nous avons fait des choix, car l'article proposait souvent plusieurs solutions.
 
 Nous choisissons les directions selon lesquelles projeter le modèle de manière aléatoire mais uniforme.
-Une autre possibilité est d'essayer de calculer la probabilité d'une projection en utilisant plusieurs facteurs tels que la longueur de la projection, l'aire de la projection, et les variations de profondeur.\\
+Une autre possibilité est d'essayer de calculer la probabilité d'une projection en utilisant plusieurs facteurs tels que la longueur de la projection, l'aire de la projection, et les variations de profondeur.
 
 Pour l'obtention des croquis à partir des modèles 3D, nous avons décidé d'appliquer Canny à la carte de profondeur.
-Cela donne de bons résultats, mais l'algorithme \emph{Suggestive Contours} qui s'applique directement au modèle 3D pourrait donner de meilleurs résultats.\\
+Cela donne de bons résultats, mais l'algorithme \emph{Suggestive Contours} qui s'applique directement au modèle 3D pourrait donner de meilleurs résultats.
 
 Nous pourrions également augmenter la résolution des projections, qui est actuellement limitée à $800 \times 800$.
-Généralement les contours sont assez fins (4-5~pixels) et peu lisses.
+Généralement les contours sont assez fins (4 à 5~pixels) et peu lisses.
 
 Il est également possible d'agir sur le nombre de projections réalisées pour chaque modèle.
 Nous nous sommes limités à 50 pour des raisons d'efficacité, mais les auteurs suggèrent 100.
