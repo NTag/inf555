@@ -1,3 +1,9 @@
 build/
 inf555.xcodeproj/project.xcworkspace/xcuserdata/
 inf555.xcodeproj/xcuserdata/camille.xcuserdatad/
+rapport/*.aux
+rapport/*.fdb_latexmk
+rapport/*.fls
+rapport/*.log
+rapport/*.out
+rapport/*.synctex.gz
