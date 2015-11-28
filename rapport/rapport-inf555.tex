@@ -203,7 +203,7 @@ Ensuite on cherche simplement de quels histogrammes il est le plus proche.
 
 \subsection{Pré-traitement}
 
-\paragraph{Filtre de Gabor/}
+\paragraph{Filtre de Gabor.}
 On a commencé par vérifier que le filtre de Gabor donnait des résultats attendus, à savoir, intensifier les contours dans une certaine direction.
 Sur la figure~\vref{fig:result-gabor}, on peut constater que pour $\theta = \pi/4$, ce résultat est obtenu, malgré quelques effets de bords.
 \begin{figure}
@@ -213,22 +213,22 @@ Sur la figure~\vref{fig:result-gabor}, on peut constater que pour $\theta = \pi/
     \end{center}
 \end{figure}
 
-\paragraph{Chaine de traitement complète/}
-Pour constituer notree vocabulaire visuel et notre base de données d'histogrammes, on a choisi les paramètres suivants:
+\paragraph{Chaine de traitement complète.}
+Pour constituer notre vocabulaire visuel et notre base de données d'histogrammes, on a choisi les paramètres suivants:
 \begin{itemize}
     \item nombre de modèles 3D: 100 (chaises, voitures, avions, \ldots);
     \item nombre de vues par modèle: 50;
     \item taille du vocabulaire: 50 mots\footnote{on a ainsi le même rapport nombre total de vues sur taille du vocabulaire que les auteurs, à savoir 100.}.
 \end{itemize}
-Le temps d'exécution a été d'environ 50 minutes. Il est à noter que la mémoire utilisée n'a pas excédée 150 MB.
-
+Le temps d'exécution a été d'environ 50 minutes.
+Il est à noter que la mémoire utilisée n'a pas excédée 300~Mo.
 On obtient alors un fichier contenant:
 \begin{itemize}
     \item la longueur des mots, le nombres de mots (taille du vocabulaire) et le nombre de total de vues sur la première ligne;
     \item une ligne par mot: la fréquence de ce mot dans le vocabulaire, suivie des 256 coordonnées du mot;
     \item une ligne par vue: le nom du modèle associé, suivi des valeurs de l'histogramme.
 \end{itemize}
-Ce fichier pèse quelques MB.
+Ce fichier pèse quelques Mo.
 
 
 \subsection{Requêtes}
@@ -239,11 +239,14 @@ On peut choisir le nombre de résultats souhaités.
 La figure~\vref{fig:query-result} montre les résultats obtenus pour un croquis donné en entrée.
 \begin{figure}
     \begin{center}
-        \includegraphics[width=.3\textwidth]{images/query-sketch}\hfill
-        \includegraphics[width=.3\textwidth]{images/query-result1}
+        \includegraphics[width=.3\textwidth]{images/query-input}\hfill
+        \includegraphics[width=.3\textwidth]{images/query-result1}\hfill
         \includegraphics[width=.3\textwidth]{images/query-result2}
+        \caption{Le croquis passé en entrée et les deux modèles trouvés par l'algorithme.\label{fig:query-result}}
     \end{center}
 \end{figure}
+On constate que notre implémentation ne donne pas des résultats satisfaisants.
+Cela peut s'expliquer par le faible nombre de modèles utilisés lors du pré-traitement ou par un bug dans le code qui fausserait les histogrammes calculés. 
 
 
 \section{Pistes d'amélioration}
