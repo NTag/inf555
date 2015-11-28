@@ -47,7 +47,7 @@ DistributedViews sphere(numberOfViews);
 Point3* directions;
 CannyFilter canny = CannyFilter(10, 30);
 GALIF* galif = new GALIF(0.13, 5, 4, 8);
-double proba = 1. / numberOfViews;
+double proba = 1./numberOfViews;
 vector<array<float, FEAT_SIZE>> features_set;
 Vocabulary* vocab = new Vocabulary();
 HistogramHelper* helper;
@@ -131,8 +131,8 @@ void processImage(float* depth) {
             helper->addFeatureForPreHistogram(idx, *it);
         }
     } else { // Prepare for vocabulary creation
-        for (vector<array<float, FEAT_SIZE>>::iterator it = features.begin(); it != features.end(); ++it) {
-            features_set.push_back(*it);
+        for (int i = 0; i < features.size(); i++) {
+            features_set.push_back(features[i]);
         }
     }
     cout << "Extraction de features : terminé" << endl;
@@ -265,8 +265,6 @@ void draw() {
                 proba = 1.;
                 loadFilesFromFolder(path);
                 currentView = numberOfViews+1;
-                
-                glutPostRedisplay();
             } else {
                 helper->computeHistograms();
                 helper->saveHistograms("/Users/ntag/Documents/X/2015-2016/INF555/inf555/histograms");
