@@ -39,6 +39,7 @@ HistogramHelper::HistogramHelper(string filename) {
             this->numberOfWords = Numbers[0];
             this->lengthOfWords = Numbers[1];
             numberOfHistograms = Numbers[2];
+            this->frequences = new double[this->numberOfWords];
         } else if (l - 1 <= this->numberOfWords) { // On lit les coordonnées des mots
             istringstream split(Line);
             string each;
@@ -52,12 +53,16 @@ HistogramHelper::HistogramHelper(string filename) {
                 if (!(conv >> x)) {
                     continue;
                 }
-                currentWord[j] = x;
+                if (j == 0) { // La ligne commence par la fréquence
+                    this->frequences[l-2] = x;
+                } else {
+                    currentWord[j-1] = x;
+                }
                 j++;
             }
             
             this->words.push_back(currentWord);
-        } else if (l - 1 - this->numberOfWords < numberOfHistograms) {
+        } else if (l - 1 - this->numberOfWords < numberOfHistograms) { // On lit des histogrammes
             istringstream split(Line);
             string each;
             
@@ -161,6 +166,22 @@ void HistogramHelper::computeHistograms() {
     this->names = newNames;
 }
 
+vector<string> HistogramHelper::findClosestModels(vector<float*> features, int numberOfResults) {
+    // On calcule les counts
+    int* counts = new int[this->numberOfWords];
+    for (int i = 0; i < this->numberOfWords; i++) {
+        counts[i] = 0;
+    }
+    for (int i = 0; i < features.size(); i++) {
+        int closestWord = findClosestWord(features[i]);
+        counts[closestWord]++;
+    }
+    
+    // On génère l'histogramme
+    Histogram h(counts, this->numberOfWords, this->frequences, this->histograms.size());
+    
+    return this->findClosestModels(h, numberOfResults);
+}
 
 vector<string> HistogramHelper::findClosestModels(Histogram &h, int numberOfResults) {
     vector<string> results;
@@ -199,16 +220,16 @@ bool HistogramHelper::saveHistograms(string filename) {
     // Première ligne : numbre-de-mots longueur-d'un-mot nombre-de-vues
     file << this->numberOfWords << " " << this->lengthOfWords << " " << numberOfHistograms << "\n";
     
-    // Ensuite on stocke les mots : index coordonnées
+    // Ensuite on stocke les mots : fréquence coordonnées
     for (int i = 0; i < this->numberOfWords; i++) {
-        // file << i;
+        file << this->frequences[i];
         for (int j = 0; j < this->lengthOfWords; j++) {
             file << " " << this->words[i][j];
         }
         file << "\n";
     }
     
-    // Puis enfin on stocke les histogrammes
+    // Puis enfin on stocke les histogrammes nom valeurs
     for (int i = 0; i < numberOfHistograms; i++) {
         file << this->names[i];
         for (int j = 0; j < numberOfWords; j++) {
