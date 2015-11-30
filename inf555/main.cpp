@@ -41,7 +41,7 @@ static const int FEAT_SIZE = 256;
 char* path;
 vector<string> files;
 string currentFile = "";
-int numberOfViews = 50;
+int numberOfViews = 5;
 int currentView = numberOfViews+1;
 DistributedViews sphere(numberOfViews);
 Point3* directions;
@@ -51,7 +51,7 @@ double proba = 1./numberOfViews;
 vector<array<float, FEAT_SIZE>> features_set;
 Vocabulary* vocab = new Vocabulary();
 HistogramHelper* helper;
-
+bool DEMO = false;
 
 /* ***** Utils functions ***** */
 
@@ -113,18 +113,25 @@ void loadFilesFromFolder(char* path) {
 void processImage(float* depth) {
     // Transform depth into a cv::Mat
     Mat img(800, 800, CV_32F, depth);
-//    imshow("Depth", img);
+    if (DEMO)
+        imshow("Depth", img);//waitKey(0);
     
     // Apply Canny filter to extract lines
     Mat edges = canny.detectEdges(img);
     cout << "Canny : terminé" << endl;
-//    imshow("Edges", edges);
-//    waitKey(0);
-    
+    if (DEMO)
+        imshow("Edges", edges);//waitKey(0);
+
     // Compute features
     cout << "Extraction de features : démarrage" << endl;
     edges.convertTo(edges, CV_32F);
     vector<array<float, FEAT_SIZE>> features = galif->features(edges, proba);
+    Mat filtered_edges = galif->filter(1, edges);
+    if (DEMO) {
+        imshow("Filtered edges", filtered_edges);
+        waitKey(0);
+    }
+ 
     if (vocab->kMeansDone) { // Create histograms
         int idx = helper->addPreHistogram(currentFile);
         for (vector<array<float, FEAT_SIZE>>::iterator it = features.begin(); it != features.end(); ++it) {
@@ -303,7 +310,6 @@ void query(string filename) {
     }
 }
 
-
 int main(int argc, char** argv) {
 //    Mat gf = galif->get_filter(1, 1600, 1600);
 //    string tygf = type2str(gf.type());
@@ -383,6 +389,7 @@ int main(int argc, char** argv) {
     if (argc < 3) {
         cout << "Usage: inf555 preprocess folder\n";
         cout << "Usage: inf555 query histograms image\n";
+        cout << "Usage: inf555 demo folder\n";
         return EXIT_FAILURE;
     }
     
@@ -394,6 +401,11 @@ int main(int argc, char** argv) {
         query(argv[3]);
         
         return 0;
+    }
+    if (action == "demo") {
+        cout << "Démonstratiion" << endl;
+        
+        DEMO = true;
     }
     
     cout << "Preprocessing\n";
